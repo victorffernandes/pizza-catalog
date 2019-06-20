@@ -71,3 +71,14 @@ int tamanho_pizza_bytes()
 		sizeof(char) * 20 + // categoria
 		sizeof(float); // preço
 }
+
+TPizza * buscaCategoria(char * categoria, char * dados){
+	FILE *ent = fopen(dados, "rb"), *out;
+	if(!dados) exit(-1);
+	TPizza *pizza;
+	fread(pizza->categoria, sizeof(char), sizeof(pizza->categoria), ent);
+	int resp = strcmp(categoria, pizza->categoria);
+	if(resp == 0); 	
+
+
+}
