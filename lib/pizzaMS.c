@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "pizzaMS.h"
+#define tam 1000
 
 int tamanho_pizza_bytes()
 {
@@ -217,4 +218,26 @@ TABM * buscaRecursiva(FILE * indexador, FILE * dados, TABM * atual, int id){
   if(atual->codigo[i] == id) i++;
 
   return buscaRecursiva(indexador, dados, atual->filho[i], id);
+}
+
+TPizza *buscaCategoria(char * categoria, char * dados){
+	FILE *ent = fopen(dados, "rb");
+	if(!dados) exit(-1);
+  TPizza *pizza = NULL;
+	TPizza *pizzaVet = (TPizza*) malloc (sizeof(TPizza) * tam);
+  int i = 0;
+  int check;
+	while(i < tam && (ent)){
+    check = fread(&pizza, tamanho_pizza_bytes(), 1, ent);
+    if(check){
+      int resp = strcmp(categoria, pizza->categoria);
+      if(resp == 0){
+        pizzaVet[i] = *pizza;
+      }    
+      i++;
+    }
+    fseek(ent, tamanho_pizza_bytes(), SEEK_CUR);
+  }
+  fclose(ent);
+  return pizzaVet;
 }
