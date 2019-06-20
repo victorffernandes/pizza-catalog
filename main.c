@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "lib/pizzaMS.h"
 
 int main()
 {
-    printf("Hello world!\n");
-    return 0;
+    insere("arvorebinariamais", 12, "Pizza Calabreza", "Pizza Especial Boa demais", 40.2, 2);
 }
