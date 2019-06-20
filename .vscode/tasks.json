@@ -6,7 +6,7 @@
         {
             "label": "Build main",
             "type": "shell",
-            "command": "/usr/bin/gcc main.c lib/*.c",
+            "command": "/usr/bin/gcc main.c ./*.c -o output.o && ./output.o",
             "group": {
                 "kind": "build",
                 "isDefault": true

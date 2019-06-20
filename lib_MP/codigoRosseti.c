@@ -12,7 +12,7 @@ typedef struct pizza {
 
 typedef struct arvbm{
   int nchaves, folha;
-  TPizza ** info;
+  int * chave;
   struct arvbm **filho, *prox;
 }TABM;
 
