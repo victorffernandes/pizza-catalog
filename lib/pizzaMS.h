@@ -28,4 +28,5 @@ FILE *criarRaizMS(char *nomeArquivo);
 TABM * buscaRecursiva(FILE * indexador, FILE * dados, TABM * atual, int id);
 int *insere(char * nomeArquivo, int cod, char *nome, char *descricao, float preco, int t);
 TPizza *buscaCategoria(char * categoria, char * dados);
+void retiraPizza(TABM *ind, char * dados);
 

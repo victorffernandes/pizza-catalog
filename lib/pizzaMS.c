@@ -241,3 +241,10 @@ TPizza *buscaCategoria(char * categoria, char * dados){
   fclose(ent);
   return pizzaVet;
 }
+
+
+void retiraPizza(TABM *ind, char * dados){
+  if(!ind) exit(-1);
+  
+
+}
