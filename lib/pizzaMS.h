@@ -29,3 +29,6 @@ TABM * buscaRecursiva(FILE * indexador, FILE * dados, TABM * atual, int id);
 int *insere(char * nomeArquivo, int cod, char *nome, char *descricao, float preco, int t);
 TPizza *buscaCategoria(char * categoria, char * dados);
 
+int escreverRaiz(char *nomeArquivo, int p);
+int recuperarRaiz(char *nomeArquivo);
+

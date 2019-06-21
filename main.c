@@ -5,5 +5,6 @@
 int main()
 {
     insere("arvorebinariamais", 12, "Pizza Calabreza", "Pizza Especial Boa demais", 40.2, 2);
-    buscaCategoria("Especial","dados_iniciais.dat");
+    /* escreverRaiz("arvorebinariamais", 0);
+    printf("%d", recuperarRaiz("arvorebinariamais")); */
 }
