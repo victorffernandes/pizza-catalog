@@ -43,7 +43,7 @@ TABM *cria(int t)
   return novo;
 }
 
-TPizza *pizza(int cod, char *nome, char *descricao, float preco)
+TPizza *pizza(int cod, char *nome, char* descricao, float preco)
 {
   TPizza *p = (TPizza *)malloc(sizeof(TPizza));
   if (p)
@@ -73,8 +73,7 @@ int lerPosicao(FILE *file)
   return ftell(file);
 }
 
-int *insere(char *nomeArquivo, int cod, char *nome, char *descricao, float preco, int t)
-{
+int *insere(char * nomeArquivo, int cod, char * nome, char * categoria,char * descricao, float preco, int t){
   /* if(busca(T, mat)) return T; */ // tem que fazer a busca antes
   FILE *indexador = criarIndexadorMS(nomeArquivo);
   FILE *dados = criarDadosMS(nomeArquivo);
@@ -281,8 +280,8 @@ TABM *busca(char *nomeArquivo, int id)
   return r;
 }
 
-TABM *buscaRecursiva(FILE *indexador, FILE *dados, TABM *atual, int id)
-{
+TABM * buscaRecursiva(FILE * indexador, FILE * dados, TABM * atual, int id){
+  if(!atual) return atual;
   int i = 0;
   while ((i < atual->nchaves) && (id > atual->codigo[i]))
     i++;
@@ -324,4 +323,30 @@ TPizza *buscaCategoria(char *categoria, char *dados)
   }
   fclose(ent);
   return pizzaVet;
+}
+
+
+void retiraPizza(TABM *ind, char * dados, char * indexador, int codigo){
+  if(!ind) exit(-1);
+  TABM * aux = buscaRecursiva(ind, dados, indexador, codigo);
+  if(aux){
+    FILE * ent = fopen(indexador, "rb");
+    if(!ent) exit(-1);
+    
+  }
+}
+
+void alteraPizza(char * dados, char * indexador, int codigo){
+  FILE * ent = fopen(indexador, "rb");
+  if(!ent) exit(-1);
+  int ind = 0;
+  int resp = 1;
+  while(resp){
+    resp = fread(ind, sizeof(int), 1, ent);
+    if(ind == codigo){
+      FILE * opn = fopen(dados, "rb+");
+      if(!opn) exit(-1);
+
+    }
+  }
 }
