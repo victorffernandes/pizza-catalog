@@ -21,7 +21,7 @@ int main()
     break;
     
     case 2:
-        retiraPizza(ind, "dados_iniciais.dat");
+        retiraPizza(ind, "indexador","dados_iniciais.dat", 5);
     break;
 
     case 3: 

@@ -35,13 +35,13 @@ TABM *cria(int t){
 }
 
 
-TPizza *pizza(int cod, char *nome, char *descricao, float preco)
+TPizza *pizza(int cod, char *nome, char *categoria, float preco)
 {
 	TPizza *p = (TPizza *) malloc(sizeof(TPizza));
 	if (p) memset(p, 0, sizeof(TPizza));
 	p->codigo = cod;
 	strcpy(p->nome, nome);
-	strcpy(p->descricao, descricao);
+	strcpy(p->categoria, categoria);
 	p->preco = preco;
 	return p;
 }
@@ -61,7 +61,7 @@ int lerPosicao(FILE * file){
   return ftell(file);
 }
 
-int *insere(char * nomeArquivo, int cod, char * nome, char * descricao, float preco, int t){
+int *insere(char * nomeArquivo, int cod, char * nome, char * categoria, float preco, int t){
   /* if(busca(T, mat)) return T; */ // tem que fazer a busca antes
   FILE * indexador = criarIndexadorMS(nomeArquivo);
   FILE * dados = criarDadosMS(nomeArquivo);
@@ -69,7 +69,7 @@ int *insere(char * nomeArquivo, int cod, char * nome, char * descricao, float pr
   if(isEmpty(dados)){
     TABM * raiz;
 
-    TPizza * p = pizza(cod, nome, descricao, preco);
+    TPizza * p = pizza(cod, nome, categoria, preco);
     fwrite(&p, tamanho_pizza_bytes(), 1, dados);
 
     raiz=cria(t);
@@ -208,6 +208,7 @@ TABM * busca(char * nomeArquivo, int id){
 }
 
 TABM * buscaRecursiva(FILE * indexador, FILE * dados, TABM * atual, int id){
+  if(!atual) return atual;
   int i = 0;
   while((i < atual->nchaves) && (id > atual->codigo[i]))i++;
 
@@ -243,8 +244,27 @@ TPizza *buscaCategoria(char * categoria, char * dados){
 }
 
 
-void retiraPizza(TABM *ind, char * dados){
+void retiraPizza(TABM *ind, char * dados, char * indexador, int codigo){
   if(!ind) exit(-1);
-  
+  TABM * aux = buscaRecursiva(ind, dados, indexador, codigo);
+  if(aux){
+    FILE * ent = fopen(indexador, "rb");
+    if(!ent) exit(-1);
+    
+  }
+}
 
+void alteraPizza(char * dados, char * indexador, int codigo){
+  FILE * ent = fopen(indexador, "rb");
+  if(!ent) exit(-1);
+  int ind = 0;
+  int resp = 1;
+  while(resp){
+    resp = fread(ind, sizeof(int), 1, ent);
+    if(ind == codigo){
+      FILE * opn = fopen(dados, "rb+");
+      if(!opn) exit(-1);
+
+    }
+  }
 }
