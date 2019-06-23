@@ -2,9 +2,35 @@
 #include <stdlib.h>
 #include "lib/pizzaMS.h"
 
+void print(FILE * indexador, TABM * r, int t){
+    if(!r->folha){
+        for(int i = 0; i < r->nchaves; i++){
+            printf("%d ", r->codigo[i]);
+            print(indexador,acharNo(indexador, r->filho[i],t), t);
+        }
+    }else{
+        for(int i = 0; i < r->nchaves; i++){
+            printf("%d ", r->codigo[i]);
+        }
+    }
+}
+
+
 int main()
 {
-    printf("Sistema gerenciador da Pizzaria\n");
+
+    insere("arvorebinariamais", 14, "Pizza Calabreza", "Pizza Especial Boa demais","Especial", 40.2, 2);
+    insere("arvorebinariamais", 3, "Pizza Robson", "Pizza Foda","Foda", 50.2, 2);
+    insere("arvorebinariamais", 2, "Pizza Iriney", "Pizza Interessante","Interessante", 22.2, 2);
+    insere("arvorebinariamais", 9, "Pizza Julinho", "Pizza Normal Mais ou Menos","Normal", 30.9, 2);
+    FILE * fp = criarIndexadorMS("arvorebinariamais");
+    FILE * fpd = criarDadosMS("arvorebinariamais");
+    TABM * raiz = acharNo(fp, recuperarRaiz("arvorebinariamais"), 2);
+    print(fp, raiz, 2);
+    fclose(fp);
+    fclose(fpd);
+
+    /* printf("Sistema gerenciador da Pizzaria\n");
     printf("Escolha:\n");
     printf("1 para adicionar uma nova pizza");
     printf("2 para retirar uma pizza");
@@ -17,25 +43,25 @@ int main()
     switch (opcao)
     {
     case 1:
-        insere("arvorebinariamais", 12, "Pizza Calabreza", "Pizza Especial Boa demais", 40.2, 2);        
+        insere("arvorebinariamais", 12, "Pizza Calabreza", "Pizza Especial Boa demais", 40.2, 2);
     break;
-    
+
     case 2:
         retiraPizza(ind, "indexador","dados_iniciais.dat", 5);
     break;
 
-    case 3: 
+    case 3:
         buscaCategoria("Especial","dados_iniciais.dat");
     break;
 
     case -9:
         exit(-1);
-    
+
     default:
         printf("Opção inválida, desculpe!");
         break;
     }
 
-    return 0;
-    
+    return 0; */
+
 }

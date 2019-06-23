@@ -7,6 +7,7 @@ typedef struct pizza
     int codigo;
     char nome[50];
     char categoria[20];
+    char descricao[50];
     float preco;
 } TPizza;
 
@@ -25,10 +26,11 @@ FILE *criarIndexadorMS(char *nomeArquivo);
 FILE *criarDadosMS(char *nomeArquivo);
 FILE *criarRaizMS(char *nomeArquivo);
 TABM * buscaRecursiva(FILE * indexador, FILE * dados, TABM * atual, int id);
-int *insere(char * nomeArquivo, int cod, char *nome, char *descricao, float preco, int t);
+int *insere(char * nomeArquivo, int cod, char * nome, char * categoria,char * descricao, float preco, int t);
 TPizza *buscaCategoria(char * categoria, char * dados);
 void retiraPizza(TABM *ind, char * dados, char * indexador, int codigo);
 void alteraPizza(char * dados, char * indexador, int codigo);
+TABM * acharNo(FILE * indexador, int i, int t);
 
 int escreverRaiz(char *nomeArquivo, int p);
 int recuperarRaiz(char *nomeArquivo);

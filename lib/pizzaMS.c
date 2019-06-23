@@ -2,22 +2,28 @@
 #include <stdlib.h>
 #include <string.h>
 #include "pizzaMS.h"
+#include <limits.h>
 #define tam 1000
-
-TABM* acharNo(FILE *indexador, int i, int t)
-{
-  fseek(indexador, i, SEEK_SET);
-  TABM* no;
-  fread(no, tamanho_arvbm_bytes(t), i, indexador);
-  return no;
-}
 
 int tamanho_pizza_bytes()
 {
   return sizeof(int) +       // cod
          sizeof(char) * 50 + // nome
          sizeof(char) * 20 + // categoria
+         sizeof(char) * 50 + // descricao
          sizeof(float);      // preço
+}
+
+TPizza *pizza(int cod, char *nome, char* descricao, char * categoria, float preco)
+{
+  TPizza *p = (TPizza *)malloc(tamanho_pizza_bytes());
+  if (p)
+    memset(p, 0, tamanho_pizza_bytes());
+  p->codigo = cod;
+  strcpy(p->nome, nome);
+  strcpy(p->descricao, descricao);
+  p->preco = preco;
+  return p;
 }
 
 int tamanho_arvbm_bytes(int t)
@@ -28,31 +34,84 @@ int tamanho_arvbm_bytes(int t)
          sizeof(int) * ((t * 2));      //filho
 }
 
-TABM *cria(int t)
+void freePizza(TPizza * pizza)
 {
-  TABM *novo = (TABM *)malloc(sizeof(TABM));
+
+  free(pizza->nome);
+  free(pizza->descricao);
+  free(pizza->categoria);
+  free(pizza);
+}
+
+void freeNo(TABM * no, int t)
+{
+  free(no->codigo);
+  free(no->pizza);
+  free(no->filho);
+  free(no);
+}
+
+TABM* cria(int t)
+{
+  TABM* novo = (TABM *)malloc(sizeof(TABM));
   novo->nchaves = 0;
-  novo->codigo = (int *)malloc(sizeof(int) * ((t * 2) - 1));
-  novo->pizza = (int *)malloc(sizeof(int) * ((t * 2) - 1));
+  novo->prox = INT_MIN ;
   novo->folha = 1;
-  novo->filho = (int *)malloc(sizeof(int) * t * 2);
-  novo->prox = NULL;
-  int i;
-  for (i = 0; i < (t * 2); i++)
-    novo->filho[i] = NULL;
+  novo->codigo = (int *)malloc(sizeof(int) * ((t * 2) - 1));
+  novo->pizza = (int *)malloc(sizeof(int ) * ((t * 2) - 1));
+  novo->filho = (int *)malloc(sizeof(int ) * t * 2);
   return novo;
 }
 
-TPizza *pizza(int cod, char *nome, char* descricao, float preco)
+TPizza * acharPizza(FILE *arquivoDados, int i){
+    fseek(arquivoDados, i, SEEK_SET);
+    TPizza * pizza = (TPizza *) malloc(tamanho_pizza_bytes());
+    fread(pizza, tamanho_pizza_bytes(), 1, arquivoDados);
+    return pizza;
+}
+
+TABM* acharNo(FILE *arquivoIndexador, int i, int t)
 {
-  TPizza *p = (TPizza *)malloc(sizeof(TPizza));
-  if (p)
-    memset(p, 0, sizeof(TPizza));
-  p->codigo = cod;
-  strcpy(p->nome, nome);
-  strcpy(p->descricao, descricao);
-  p->preco = preco;
-  return p;
+  fseek(arquivoIndexador, i, SEEK_SET);
+  TABM* index = cria(t);
+  fread(&index->folha, sizeof(int), 1, arquivoIndexador);
+  fread(&index->nchaves, sizeof(int), 1, arquivoIndexador);
+  fread(&index->prox, sizeof(int), 1, arquivoIndexador);
+//  fread(index->codigo, sizeof(int), ((t * 2) - 1),  arquivoIndexador);
+  for(int j = 0; j < ((t * 2) - 1); j++ ) {
+    fread(&index->codigo[j], sizeof(int), 1,  arquivoIndexador);
+  }
+  fread(index->pizza, sizeof(int), ((t * 2) - 1),  arquivoIndexador);
+  fread(index->filho, sizeof(int), t * 2,  arquivoIndexador);
+  return index;
+}
+
+int inserePizza(FILE * arquivoDados, TPizza * pizza){
+    fseek(arquivoDados, 0, SEEK_END);
+    int posDados = ftell(arquivoDados);
+    fwrite(pizza, tamanho_pizza_bytes(), 1, arquivoDados);
+    return posDados;
+}
+
+int insereNo(FILE * arquivoIndexador, TABM * index, int t){
+    fseek(arquivoIndexador, 0, SEEK_END);
+    int pos = ftell(arquivoIndexador);
+    return alteraNo(arquivoIndexador, index, pos, t);
+}
+
+int alteraNo(FILE * arquivoIndexador, TABM * index,int i, int t){
+  fseek(arquivoIndexador, i, SEEK_SET);
+  int posInicial = ftell(arquivoIndexador);
+  fwrite(&index->folha, sizeof(int), 1, arquivoIndexador);
+  fwrite(&index->nchaves, sizeof(int), 1, arquivoIndexador);
+  fwrite(&index->prox, sizeof(int), 1, arquivoIndexador);
+  for(int j = 0; j < ((t * 2) - 1); j++ ){
+    fwrite(&index->codigo[j], sizeof(int), 1,  arquivoIndexador);
+  }
+
+  fwrite(index->pizza, sizeof(int), ((t * 2) - 1),  arquivoIndexador);
+  fwrite(index->filho, sizeof(int), t * 2,  arquivoIndexador);
+  return posInicial;
 }
 
 int isEmpty(FILE *file)
@@ -77,41 +136,94 @@ int *insere(char * nomeArquivo, int cod, char * nome, char * categoria,char * de
   /* if(busca(T, mat)) return T; */ // tem que fazer a busca antes
   FILE *indexador = criarIndexadorMS(nomeArquivo);
   FILE *dados = criarDadosMS(nomeArquivo);
-  TPizza *p = pizza(cod, nome, descricao, preco);
-  TABM *raiz;
+  printf("Executando criadores de arquivos");
+  TPizza *p = pizza(cod, nome, descricao,categoria, preco);
+
 
   if (isEmpty(dados))
   {
-
-    TPizza *p = pizza(cod, nome, descricao, preco);
-    fwrite(&p, tamanho_pizza_bytes(), 1, dados);
-
-    raiz = cria(t);
+    printf("ESTAVA VAZIO");
+    TABM *raiz = cria(t);
     raiz->codigo[0] = cod;
-    raiz->pizza[0] = 0;
+    raiz->pizza[0] = inserePizza(dados, p);
     raiz->nchaves = 1;
-    int r = fwrite(&raiz, tamanho_arvbm_bytes(t), 1, indexador);
+    int r = alteraNo(indexador,raiz, 0, t);
+
     fclose(indexador);
     fclose(dados);
-    return r != 0;
+    freeNo(raiz, t);
+    freePizza(p);
+
+    return escreverRaiz(nomeArquivo, r);
   }
 
-  fread(raiz, tamanho_arvbm_bytes(t), 1, indexador);
+  int raiz_int = recuperarRaiz(nomeArquivo);
+  TABM *raiz = acharNo(indexador,raiz_int , t); // achar raiz
 
-  /* if (raiz->nchaves == (2 * t) - 1)
+  if (raiz->nchaves == (2 * t) - 1)
   {
+    printf("TEVE DIVISÃO DE NÓS");
     TABM *S = cria(t);
     S->nchaves = 0;
     S->folha = 0;
-    S->filho[0] = raiz;
-    S = divisao(S, 1, T, t);
-    S = insere_nao_completo(S, p, t);
-    return S;
-  } */
+    S->filho[0] = raiz_int;
+    int s_i = insereNo(indexador,S,t);
+    s_i = divisao(indexador, dados, s_i, 1, raiz_int, t);
+    s_i = insere_nao_completo(indexador, dados, S, p, t);
+    return escreverRaiz(nomeArquivo, s_i);
+  }
+  printf("SÓ DEVE INSERIR NÃO COMPLETO");
+  raiz_int = insere_nao_completo(indexador, dados, 0, p, t);
+  escreverRaiz(nomeArquivo, raiz);
 
-  raiz = insere_nao_completo(indexador, dados, 0, p, t);
-  fwrite(raiz, tamanho_arvbm_bytes(t), 0, indexador);
-  return raiz;
+  fclose(indexador);
+  fclose(dados);
+  freeNo(raiz, t);
+  freePizza(pizza);
+
+  return raiz_int;
+}
+
+int divisao(FILE* indexador, FILE * dados, int *x_i, int i, int * y_i, int t){
+  TABM * x = acharNo(indexador, x_i, t);
+  TABM * y = acharNo(indexador, y_i, t);
+  TABM *z = cria(t);
+  z->folha = y->folha;
+  int j;
+  if(!y->folha){
+    z->nchaves = t-1;
+    for(j=0;j<t-1;j++){
+     z->codigo[j] = y->codigo[j+t];
+     z->pizza[j] = y->pizza[j+t];
+    }
+    for(j=0;j<t;j++){
+      z->filho[j] = y->filho[j+t];
+      y->filho[j+t] = NULL;
+    }
+  }
+  else {
+    z->nchaves = t; //z possuir� uma chave a mais que y se for folha
+    for(j=0;j < t;j++){
+        z->codigo[j] = y->codigo[j+t-1];//Caso em que y � folha, temos q passar a info para o n� da direita
+        z->pizza[j] = y->pizza[j+t-1];
+    }
+    y->prox = z;
+  }
+  y->nchaves = t-1;
+  for(j=x->nchaves; j>=i; j--) x->filho[j+1]=x->filho[j];
+  x->filho[i] = z;
+  for(j=x->nchaves; j>=i; j--){
+    x->codigo[j] = x->codigo[j-1];
+    x->pizza[j] = x->pizza[j-1];
+  }
+  x->codigo[i-1] = y->codigo[t-1];
+  x->pizza[i-1] = y->pizza[t-1];
+  x->nchaves++;
+
+  insereNo(indexador,z,t);
+  alteraNo(indexador,x, x_i, t);
+  alteraNo(indexador,y, y_i, t);
+  return x_i;
 }
 
 //insere no nó que não está completo
@@ -124,11 +236,11 @@ int insere_nao_completo(FILE *arquivoIndexador, FILE *arquivoDados, int x_i, TPi
     while ((i >= 0) && (pizza->codigo < x->codigo[i]))
     {
       x->codigo[i + 1] = x->codigo[i];
+      x->pizza[i + 1] = x->pizza[i];
       i--;
     }
-
     x->codigo[i + 1] = pizza->codigo;
-    x->pizza = inserePizza(arquivoDados, pizza); // adiciona a pizza no arquivo dados e retorna sua posição no mesmo
+    x->pizza[i + 1] = inserePizza(arquivoDados, pizza); // adiciona a pizza no arquivo dados e retorna sua posição no mesmo
     x->nchaves++;
     return alteraNo(arquivoIndexador, x, x_i, t);
   }
@@ -151,6 +263,7 @@ char *concatenarStrings(char *sufixo, char *prefixo)
 {
   int tamanhoByteString = strlen(sufixo) + strlen(prefixo);
   char *nomeConcatenado = (char *)malloc(sizeof(char) * tamanhoByteString);
+  nomeConcatenado[0] = '\0';
   strcat(nomeConcatenado, sufixo);
   strcat(nomeConcatenado, prefixo);
   return nomeConcatenado;
@@ -160,9 +273,14 @@ FILE *criarDadosMS(char *nomeArquivo)
 {
   char *nomeArquivoDados = concatenarStrings(nomeArquivo, "_dados.o");
 
-  FILE *arquivoDados = fopen(nomeArquivoDados, "rb+");
-  if (arquivoDados == NULL)
+  printf("Nome do arquivo pra abrir: %s \n", nomeArquivoDados);
+  FILE * arquivoDados = fopen(nomeArquivoDados, "rb+");
+  printf("executou a abertura do arquivo \n");
+  int boolean = arquivoDados == NULL;
+  printf("Executou a operação lógica");
+  if (boolean)
   {
+    printf("Nome do arquivo pra abrir com wb: %s \n", nomeArquivoDados);
     arquivoDados = fopen(nomeArquivoDados, "wb+");
     if (arquivoDados == NULL)
     {
@@ -170,38 +288,29 @@ FILE *criarDadosMS(char *nomeArquivo)
       exit(1);
     }
   }
-
+  printf("retornando arquivo de dados");
   return arquivoDados;
-}
-
-int inserePizza(FILE * arquivoDados, TPizza * pizza){
-    fseek(arquivoDados, 0, SEEK_END);
-    int posDados = ftell(arquivoDados);
-    fwrite(pizza, tamanho_pizza_bytes(), 1, arquivoDados);
-    return posDados;
-}
-
-int alteraNo(FILE * arquivoIndexador, TABM * index,int i, int t){
-  fseek(arquivoIndexador, i, SEEK_SET);
-  int pos = ftell(arquivoIndexador);
-  fwrite(index, tamanho_arvbm_bytes(t), 1, arquivoIndexador);
-  return pos;
-
 }
 
 FILE *criarIndexadorMS(char *nomeArquivo)
 {
+
   char *nomeArquivoIndexador = concatenarStrings(nomeArquivo, "_indexador.o");
 
+  printf("Nome do arquivo pra abrir: %s \n", nomeArquivoIndexador);
   FILE *arquivoIndexador = fopen(nomeArquivoIndexador, "rb+");
+  printf("executou a abertura do arquivo \n");
   if (arquivoIndexador == NULL)
   {
+    printf("Nome do arquivo pra abrir com wb: %s \n", nomeArquivoIndexador);
     arquivoIndexador = fopen(nomeArquivoIndexador, "wb+");
     if (arquivoIndexador == NULL)
     {
+      printf("OCORREU UM ERRO");
       exit(1);
     }
   }
+  printf("retornando arquivo indexador \n");
   return arquivoIndexador;
 }
 
@@ -234,12 +343,12 @@ int recuperarRaiz(char *nomeArquivo)
 int escreverRaiz(char *nomeArquivo, int p)
 {
   FILE *arquivoRaiz = criarRaizMS(nomeArquivo);
-  /* fwrite(p, sizeof(int), 1, arquivoRaiz);
-  fclose(arquivoRaiz); */
-  return 1 || p;
+  fwrite(&p, sizeof(int), 1, arquivoRaiz);
+  fclose(arquivoRaiz);
+  return p;
 }
 
-TABM *busca(char *nomeArquivo, int id)
+/* TABM *busca(char *nomeArquivo, int id)
 {
   FILE *dados = criarDadosMS(nomeArquivo);
   FILE *indexador = criarIndexadorMS(nomeArquivo);
@@ -296,7 +405,7 @@ TABM * buscaRecursiva(FILE * indexador, FILE * dados, TABM * atual, int id){
     i++;
 
   return buscaRecursiva(indexador, dados, atual->filho[i], id);
-}
+} */
 
 TPizza *buscaCategoria(char *categoria, char *dados)
 {
@@ -326,15 +435,15 @@ TPizza *buscaCategoria(char *categoria, char *dados)
 }
 
 
-void retiraPizza(TABM *ind, char * dados, char * indexador, int codigo){
+/* void retiraPizza(TABM *ind, char * dados, char * indexador, int codigo){
   if(!ind) exit(-1);
   TABM * aux = buscaRecursiva(ind, dados, indexador, codigo);
   if(aux){
     FILE * ent = fopen(indexador, "rb");
     if(!ent) exit(-1);
-    
+
   }
-}
+} */
 
 void alteraPizza(char * dados, char * indexador, int codigo){
   FILE * ent = fopen(indexador, "rb");
