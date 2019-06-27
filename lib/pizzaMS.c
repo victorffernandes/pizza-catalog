@@ -36,10 +36,6 @@ int tamanho_arvbm_bytes(int t)
 
 void freePizza(TPizza * pizza)
 {
-
-  free(pizza->nome);
-  free(pizza->descricao);
-  free(pizza->categoria);
   free(pizza);
 }
 
@@ -53,13 +49,13 @@ void freeNo(TABM * no, int t)
 
 TABM* cria(int t)
 {
-  TABM* novo = (TABM *)malloc(sizeof(TABM));
+  TABM * novo = malloc(sizeof(TABM));
   novo->nchaves = 0;
   novo->prox = INT_MIN ;
   novo->folha = 1;
-  novo->codigo = (int *)malloc(sizeof(int) * ((t * 2) - 1));
-  novo->pizza = (int *)malloc(sizeof(int ) * ((t * 2) - 1));
-  novo->filho = (int *)malloc(sizeof(int ) * t * 2);
+  novo->codigo = malloc(sizeof(int) * ((t * 2) - 1) + 1);
+  novo->pizza = malloc(sizeof(int ) * ((t * 2) - 1) + 1);
+  novo->filho = malloc(sizeof(int ) * t * 2 + 1);
   return novo;
 }
 
@@ -80,9 +76,13 @@ TABM* acharNo(FILE *arquivoIndexador, int i, int t)
 //  fread(index->codigo, sizeof(int), ((t * 2) - 1),  arquivoIndexador);
   for(int j = 0; j < ((t * 2) - 1); j++ ) {
     fread(&index->codigo[j], sizeof(int), 1,  arquivoIndexador);
+    fread(&index->pizza[j], sizeof(int), 1,  arquivoIndexador);
   }
-  fread(index->pizza, sizeof(int), ((t * 2) - 1),  arquivoIndexador);
-  fread(index->filho, sizeof(int), t * 2,  arquivoIndexador);
+
+  for(int j = 0; j < ((t * 2)); j++ ) {
+    fread(&index->filho[j], sizeof(int), 1,  arquivoIndexador);
+  }
+
   return index;
 }
 
@@ -170,6 +170,8 @@ int *insere(char * nomeArquivo, int cod, char * nome, char * categoria,char * de
     int s_i = insereNo(indexador,S,t);
     s_i = divisao(indexador, dados, s_i, 1, raiz_int, t);
     s_i = insere_nao_completo(indexador, dados, S, p, t);
+    freeNo(S);
+    freeNo(raiz, t);
     return escreverRaiz(nomeArquivo, s_i);
   }
   printf("SÓ DEVE INSERIR NÃO COMPLETO");
@@ -179,7 +181,7 @@ int *insere(char * nomeArquivo, int cod, char * nome, char * categoria,char * de
   fclose(indexador);
   fclose(dados);
   freeNo(raiz, t);
-  freePizza(pizza);
+  freePizza(p);
 
   return raiz_int;
 }
@@ -223,6 +225,9 @@ int divisao(FILE* indexador, FILE * dados, int *x_i, int i, int * y_i, int t){
   insereNo(indexador,z,t);
   alteraNo(indexador,x, x_i, t);
   alteraNo(indexador,y, y_i, t);
+  freeNo(z,t);
+  freeNo(y,t);
+  freeNo(x,t);
   return x_i;
 }
 
@@ -255,8 +260,10 @@ int insere_nao_completo(FILE *arquivoIndexador, FILE *arquivoDados, int x_i, TPi
       i++;
   }
   x->filho[i] = insere_nao_completo(arquivoIndexador, arquivoDados,  x->filho[i], pizza->codigo, t);
-
-  return alteraNo(arquivoIndexador, x, x_i, t);
+  int endereco = alteraNo(arquivoIndexador, x, x_i, t);
+  freeNo(filho,t);
+  freeNo(x,t);
+  return endereco;
 }
 
 char *concatenarStrings(char *sufixo, char *prefixo)

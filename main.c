@@ -6,7 +6,7 @@ void print(FILE * indexador, TABM * r, int t){
     if(!r->folha){
         for(int i = 0; i < r->nchaves; i++){
             printf("%d ", r->codigo[i]);
-            print(indexador,acharNo(indexador, r->filho[i],t), t);
+            //print(indexador,acharNo(indexador, r->filho[i],t), t);
         }
     }else{
         for(int i = 0; i < r->nchaves; i++){
@@ -21,14 +21,13 @@ int main()
 
     insere("arvorebinariamais", 14, "Pizza Calabreza", "Pizza Especial Boa demais","Especial", 40.2, 2);
     insere("arvorebinariamais", 3, "Pizza Robson", "Pizza Foda","Foda", 50.2, 2);
-    insere("arvorebinariamais", 2, "Pizza Iriney", "Pizza Interessante","Interessante", 22.2, 2);
-    insere("arvorebinariamais", 9, "Pizza Julinho", "Pizza Normal Mais ou Menos","Normal", 30.9, 2);
+//    insere("arvorebinariamais", 5, "Pizza Robson", "Pizza Foda","Foda", 50.2, 2);
     FILE * fp = criarIndexadorMS("arvorebinariamais");
-    FILE * fpd = criarDadosMS("arvorebinariamais");
-    TABM * raiz = acharNo(fp, recuperarRaiz("arvorebinariamais"), 2);
+    int raiz_int = recuperarRaiz("arvorebinariamais");
+    TABM * raiz = acharNo(fp,0 , 2);
     print(fp, raiz, 2);
     fclose(fp);
-    fclose(fpd);
+
 
     /* printf("Sistema gerenciador da Pizzaria\n");
     printf("Escolha:\n");

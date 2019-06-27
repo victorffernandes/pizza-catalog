@@ -31,6 +31,10 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="lib/pizzaMS.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="lib/pizzaMS.h" />
 		<Unit filename="main.c">
 			<Option compilerVar="CC" />
 		</Unit>
