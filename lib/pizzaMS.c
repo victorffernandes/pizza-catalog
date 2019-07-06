@@ -445,17 +445,22 @@ TPizza *buscaCategoria(char *categoria, char *dados)
 }
 
 
-void retiraPizza(TABM *ind, char *dados, char *indexador, int codigo){
+void retiraPizza(TABM *ind, char *dados, char *indexador, int codigo, int t){
   if(!ind) exit(-1);
   TABM *aux = buscaRecursiva(ind, dados, indexador, codigo);
   if(aux){
     FILE *ent = fopen(indexador, "rb");
-    if(!ent) exit(-1);
-    
-
-
+     if(!ent) exit(-1);  
+    int i;
+    for(i = 0; i < (2*t)-1; i++){
+      if(ind->codigo[i] == codigo){
+        if(ind->nchaves == t-1){}
+      }
+    }    
   }
 } 
+    
+  
 
 void alteraPizza(char *dados, char *indexador, int codigo){
   FILE *ent = fopen(indexador, "rb"), *opn;
@@ -474,14 +479,30 @@ void alteraPizza(char *dados, char *indexador, int codigo){
       resp = fread(&pizza, tamanho_pizza_bytes(), 1, opn);
       printf("O nome da pizza que voce deseja remover eh: %s\n", pizza.nome);
       printf("Para alterar o nome da pizza, escreva um novo nome\n");
-      fscanf(opn, "%s", &aux.nome);
+      scanf("%s", &aux.nome);
+      fprintf(opn, "%s", aux.nome);
       printf("A categoria da pizza que voce deseja alterar eh: %s\n", pizza.categoria);
       printf("Para trocar a categoria, escreva uma nova\n");
-      fscanf(opn, "%s", &aux.categoria);
-      printf("Para alterar a descricao da pizza, escreva uma nova: \n [%^\n]", &aux.descricao);   
+      scanf("%s", &aux.categoria);
+      printf("Para alterar a descricao da pizza, escreva uma nova: \n");
+      fprintf("[%^\n]", &aux.descricao);
     }
     i++;
   }
   fclose(ent);
   fclose(opn);
+}
+
+TPizza buscaPizza(char *dados, int codigo){
+  FILE *ent = fopen(dados, "rb");
+  if(!ent) exit(-1);
+  TPizza pizza;
+  int resp = 1;
+  while(resp)
+  {
+    resp = fread(&pizza, tamanho_pizza_bytes(), 1, ent);
+    if(pizza.codigo == codigo){
+      return pizza;
+    }
+  }  
 }
