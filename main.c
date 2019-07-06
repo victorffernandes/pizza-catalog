@@ -19,9 +19,9 @@ void print(FILE * indexador, TABM * r, int t){
 int main()
 {
 
-    insere("arvorebinariamais", 14, "Pizza Calabreza", "Pizza Especial Boa demais","Especial", 40.2, 2);
-    insere("arvorebinariamais", 3, "Pizza Robson", "Pizza Foda","Foda", 50.2, 2);
-//    insere("arvorebinariamais", 5, "Pizza Robson", "Pizza Foda","Foda", 50.2, 2);
+    insere("arvorebinariamais", 47, "Pizza Calabreza", "Pizza Especial Boa demais","lalala", 40.2, 2);
+    insere("arvorebinariamais", 3, "Pizza Robson", "Pizza Foda", "Foda", 50.2, 2);
+    insere("arvorebinariamais", 5, "Pizza Robson", "Pizza Foda","Foda", 50.2, 2);
     FILE * fp = criarIndexadorMS("arvorebinariamais");
     int raiz_int = recuperarRaiz("arvorebinariamais");
     TABM * raiz = acharNo(fp,0 , 2);

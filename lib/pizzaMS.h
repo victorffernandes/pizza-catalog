@@ -16,7 +16,8 @@ typedef struct arvbm
     int nchaves, folha;
     int * codigo; //chave primaria
     int * pizza; // endereço da pizza dentro do arquivo dados
-    int * filho, prox;
+    int * filho;
+    int prox;
 } TABM;
 
 

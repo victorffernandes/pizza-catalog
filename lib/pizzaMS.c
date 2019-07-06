@@ -49,13 +49,13 @@ void freeNo(TABM * no, int t)
 
 TABM* cria(int t)
 {
-  TABM * novo = malloc(sizeof(TABM));
+  TABM * novo = (TABM *)malloc(sizeof(TABM));
   novo->nchaves = 0;
-  novo->prox = INT_MIN ;
+  novo->prox = -1;
   novo->folha = 1;
   novo->codigo = malloc(sizeof(int) * ((t * 2) - 1) + 1);
   novo->pizza = malloc(sizeof(int ) * ((t * 2) - 1) + 1);
-  novo->filho = malloc(sizeof(int ) * t * 2 + 1);
+  novo->filho = malloc(sizeof(int ) * t * 2);// filho é só 2t
   return novo;
 }
 
@@ -73,7 +73,7 @@ TABM* acharNo(FILE *arquivoIndexador, int i, int t)
   fread(&index->folha, sizeof(int), 1, arquivoIndexador);
   fread(&index->nchaves, sizeof(int), 1, arquivoIndexador);
   fread(&index->prox, sizeof(int), 1, arquivoIndexador);
-//  fread(index->codigo, sizeof(int), ((t * 2) - 1),  arquivoIndexador);
+
   for(int j = 0; j < ((t * 2) - 1); j++ ) {
     fread(&index->codigo[j], sizeof(int), 1,  arquivoIndexador);
     fread(&index->pizza[j], sizeof(int), 1,  arquivoIndexador);
@@ -107,10 +107,12 @@ int alteraNo(FILE * arquivoIndexador, TABM * index,int i, int t){
   fwrite(&index->prox, sizeof(int), 1, arquivoIndexador);
   for(int j = 0; j < ((t * 2) - 1); j++ ){
     fwrite(&index->codigo[j], sizeof(int), 1,  arquivoIndexador);
+    fwrite(&index->pizza[j], sizeof(int), 1,  arquivoIndexador);
   }
 
-  fwrite(index->pizza, sizeof(int), ((t * 2) - 1),  arquivoIndexador);
-  fwrite(index->filho, sizeof(int), t * 2,  arquivoIndexador);
+  for(int j = 0; j < ((t * 2)); j++ ){
+    fwrite(&index->filho[j], sizeof(int), 1,  arquivoIndexador);
+  }
   return posInicial;
 }
 
@@ -160,7 +162,7 @@ int *insere(char * nomeArquivo, int cod, char * nome, char * categoria,char * de
   int raiz_int = recuperarRaiz(nomeArquivo);
   TABM *raiz = acharNo(indexador,raiz_int , t); // achar raiz
 
-  if (raiz->nchaves == (2 * t) - 1)
+if (raiz->nchaves == (2 * t) - 1)
   {
     printf("TEVE DIVISÃO DE NÓS");
     TABM *S = cria(t);
@@ -170,13 +172,13 @@ int *insere(char * nomeArquivo, int cod, char * nome, char * categoria,char * de
     int s_i = insereNo(indexador,S,t);
     s_i = divisao(indexador, dados, s_i, 1, raiz_int, t);
     s_i = insere_nao_completo(indexador, dados, S, p, t);
-    freeNo(S);
+    freeNo(S, t);
     freeNo(raiz, t);
     return escreverRaiz(nomeArquivo, s_i);
   }
   printf("SÓ DEVE INSERIR NÃO COMPLETO");
   raiz_int = insere_nao_completo(indexador, dados, 0, p, t);
-  escreverRaiz(nomeArquivo, raiz);
+  escreverRaiz(nomeArquivo, raiz_int);
 
   fclose(indexador);
   fclose(dados);
@@ -268,7 +270,7 @@ int insere_nao_completo(FILE *arquivoIndexador, FILE *arquivoDados, int x_i, TPi
 
 char *concatenarStrings(char *sufixo, char *prefixo)
 {
-  int tamanhoByteString = strlen(sufixo) + strlen(prefixo);
+  int tamanhoByteString = strlen(sufixo) + strlen(prefixo) + 1;
   char *nomeConcatenado = (char *)malloc(sizeof(char) * tamanhoByteString);
   nomeConcatenado[0] = '\0';
   strcat(nomeConcatenado, sufixo);
@@ -301,7 +303,6 @@ FILE *criarDadosMS(char *nomeArquivo)
 
 FILE *criarIndexadorMS(char *nomeArquivo)
 {
-
   char *nomeArquivoIndexador = concatenarStrings(nomeArquivo, "_indexador.o");
 
   printf("Nome do arquivo pra abrir: %s \n", nomeArquivoIndexador);
@@ -350,9 +351,11 @@ int recuperarRaiz(char *nomeArquivo)
 int escreverRaiz(char *nomeArquivo, int p)
 {
   FILE *arquivoRaiz = criarRaizMS(nomeArquivo);
-  fwrite(&p, sizeof(int), 1, arquivoRaiz);
+  int * valor = (int *) malloc(sizeof(int));
+  valor = &p;
+  fwrite(valor, sizeof(int), 1, arquivoRaiz);
   fclose(arquivoRaiz);
-  return p;
+  return *valor;
 }
 
 /* TABM *busca(char *nomeArquivo, int id)
