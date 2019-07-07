@@ -488,35 +488,30 @@ void retiraPizza(TABM *ind, char *dados, char *indexador, int codigo, int t)
   }
 }
 
-void alteraPizza(char *dados, char *indexador, int codigo)
-{
+void alteraPizza(char *dados, char *indexador, int codigo){
   FILE *ent = fopen(indexador, "rb"), *opn;
-  if (!ent)
-    exit(-1);
+  if(!ent) exit(-1);
   fseek(ent, 0L, SEEK_END);
   int fileSize = ftell(ent), i;
   rewind(ent);
   int ind = 0;
   int resp = 1;
-  while ((resp) && (i < fileSize))
-  {
-    resp = fread(ind, sizeof(int), 1, ent);
-    if (ind == codigo)
-    {
+  while((resp) && (i < fileSize)){
+    resp = fread(&ind, sizeof(int), 1, ent);
+    if(ind == codigo){
       opn = fopen(dados, "rb+");
-      if (!opn)
-        exit(-1);
+      if(!opn) exit(-1);
       TPizza aux, pizza;
       resp = fread(&pizza, tamanho_pizza_bytes(), 1, opn);
       printf("O nome da pizza que voce deseja remover eh: %s\n", pizza.nome);
       printf("Para alterar o nome da pizza, escreva um novo nome\n");
-      scanf("%s", &aux.nome);
+      scanf("%s", aux.nome);
       fprintf(opn, "%s", aux.nome);
       printf("A categoria da pizza que voce deseja alterar eh: %s\n", pizza.categoria);
       printf("Para trocar a categoria, escreva uma nova\n");
-      scanf("%s", &aux.categoria);
+      scanf("%s", aux.categoria);
       printf("Para alterar a descricao da pizza, escreva uma nova: \n");
-      fprintf("[%^\n]", &aux.descricao);
+      fprintf("[%^\n]", aux.descricao, ent);
     }
     i++;
   }
@@ -524,19 +519,19 @@ void alteraPizza(char *dados, char *indexador, int codigo)
   fclose(opn);
 }
 
-TPizza buscaPizza(char *dados, int codigo)
-{
+
+TPizza buscaPizza(char *dados, int codigo){//dando problema na hora de abrir o arquivo
   FILE *ent = fopen(dados, "rb");
-  if (!ent)
-    exit(-1);
-  TPizza pizza;
+  if(!ent) exit(-1);
+  TPizza pizza, aux;
   int resp = 1;
-  while (resp)
+  while(resp)
   {
     resp = fread(&pizza, tamanho_pizza_bytes(), 1, ent);
-    if (pizza.codigo == codigo)
-    {
-      return pizza;
+    if(pizza.codigo == codigo){
+      aux = pizza;
     }
-  }
+  } 
+  fclose(ent);
+  return aux;
 }

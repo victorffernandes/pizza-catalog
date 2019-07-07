@@ -28,39 +28,56 @@ int main()
     print(fp, raiz, 2);
     fclose(fp);
 
+    int opcao = 1, codigo;
+    while(opcao != -9){
+      printf("Sistema gerenciador da Pizzaria\n");
+      printf("Escolha:\n");
+      printf("1 para adicionar uma nova pizza\n");
+      printf("2 para retirar uma pizza\n");
+      printf("3 para buscar pizzas por categoria\n");
+      printf("4 para buscar uma pizza\n");
+      printf("5 para alterar uma pizza\n");
+      printf("-9 para encerrar\n");
 
-    /* printf("Sistema gerenciador da Pizzaria\n");
-    printf("Escolha:\n");
-    printf("1 para adicionar uma nova pizza");
-    printf("2 para retirar uma pizza");
-    printf("3 para busca pizzas por categoria");
-    printf("-9 para encerrar");
+      TABM *ind;
+      scanf("%d", &opcao);
+      switch (opcao)
+      {
+      case 1:
+          insere("arvorebinariamais", 12, "Pizza Calabreza", "Pizza Especial Boa demais", "hjskdkshkdhskahda", 20, 2);
+      break;
 
-    int opcao;
-    TABM *ind;
-    scanf("%d", &opcao);
-    switch (opcao)
-    {
-    case 1:
-        insere("arvorebinariamais", 12, "Pizza Calabreza", "Pizza Especial Boa demais", 40.2, 2);
-    break;
+      /*case 2:
+          printf("Digite o código da pizza que deseja retirar: ");
+          scanf("%d", &codigo);
+          retiraPizza(ind, "indexador","dados_iniciais.dat", codigo, 2);
+      break;*/
 
-    case 2:
-        retiraPizza(ind, "indexador","dados_iniciais.dat", 5);
-    break;
+      case 3:
+          buscaCategoria("Especial","dados_iniciais.dat");
+      break;
 
-    case 3:
-        buscaCategoria("Especial","dados_iniciais.dat");
-    break;
+      case 4:
+          printf("Digite o código de uma pizza: ");
+          scanf("%d", &codigo);
+          buscaPizza("dados_iniciais", codigo);
+      break;
+      case 5:
+          printf("Digite o código da pizza a ser alterada: ");
+          scanf("%d", &codigo);
+          alteraPizza("dados_iniciais", "indexador", codigo);
+      break;
 
-    case -9:
-        exit(-1);
 
-    default:
-        printf("OpÃ§Ã£o invÃ¡lida, desculpe!");
-        break;
+
+      case -9:
+          exit(-1);
+
+      default:
+          printf("Opção inválida, desculpe!");
+          break;
+      }
     }
-
-    return 0; */
+    return 0;
 
 }
