@@ -518,12 +518,15 @@ void alteraPizza(char *dados, char *indexador, int codigo){
       printf("O nome da pizza que voce deseja alterar eh: %s\n", pizza.nome);
       printf("Para alterar o nome da pizza, escreva um novo nome\n");
       scanf("%s", aux.nome);
+      aux.nome[49] = '\0';
       fprintf(opn, "%s", aux.nome);
       printf("A categoria da pizza que voce deseja alterar eh: %s\n", pizza.categoria);
       printf("Para trocar a categoria, escreva uma nova\n");
       scanf("%s", aux.categoria);
+      aux.categoria[19] = '\0';
       printf("Para alterar a descricao da pizza, escreva uma nova: \n");
       fprintf("[%^\n]", aux.descricao, ent);
+      aux.descricao[49] = ' \0';
     }
     i++;
   }
@@ -634,6 +637,11 @@ void removePizzasPorCategoria(char *dados, int t){
   FILE *ent = fopen(dados, "rb");
   int tam = tamanhoArquivo(ent);
   TPizza *vet = (TPizza *) malloc(tam);
+  char categoria[20];
+  printf("Digite a categoria que deseja remover: \n");
+  scanf("%s", categoria);
+  categoria[19] = '\0';
+  vet = buscaCategoria(dados, categoria);
   int i = 0;
   while (i < tam)
   {
