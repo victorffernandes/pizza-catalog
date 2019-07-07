@@ -69,11 +69,11 @@ int main()
           printf("Insira o codigo da pizza: ");
           scanf("%d", &codigo);
           printf("Insira o nome da pizza: ");
-          scanf("%s", &nome);
+          scanf("%s", nome);
           printf("Insira a categoria da pizza: ");
-          scanf("%s", &categoria);
+          scanf("%s", categoria);
           printf("Insira a descricao da pizza: ");
-          scanf("%s", &descricao);
+          scanf("%s", descricao);
           printf("Insira o preco da pizza: ");
           scanf("%f", &preco);
           insere("arvorebinariamais", codigo, nome, categoria, descricao, preco, t);
@@ -87,7 +87,7 @@ int main()
 
       case 3:
           printf("Insira a categoria da pizza: ");
-          scanf("%s", &categoria);
+          scanf("%s", categoria);
           buscaCategoria("arvorebinariamais", categoria);
       break;
 
