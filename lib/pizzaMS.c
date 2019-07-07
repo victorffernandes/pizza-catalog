@@ -216,7 +216,6 @@ int *insere(char * nomeArquivo, int cod, char * nome, char * categoria,char * de
   }
   raiz_int = insere_nao_completo(indexador, dados, raiz_int, p, t);
   escreverRaiz(nomeArquivo, raiz_int);
-  readAll(indexador, t);
   fclose(indexador);
   fclose(dados);
   freeNo(raiz, t);
@@ -530,6 +529,86 @@ void alteraPizza(char *dados, char *indexador, int codigo){
   }
   fclose(ent);
   fclose(opn);
+}
+
+
+
+int remocao(char * nomeArquivo, int cod, int t){
+    FILE * indexador = criarIndexadorMS(nomeArquivo);
+    FILE * dados = criarDadosMS(nomeArquivo);
+    readAll(indexador, t);
+    int raiz_i = recuperarRaiz(nomeArquivo);
+
+    TABM * raiz = acharNo(indexador, raiz_i, t);
+    if(!raiz->folha){
+        int i = 0;
+        while(cod > raiz->codigo[i] && i <= raiz->nchaves) i++;
+        int ls = i - 1, rs = i + 1;
+        if(i == 0) ls = -1;// faz parte do raciocínio
+        if(i == raiz->nchaves) rs = -1;
+        int removido = remocaoRecur(indexador, dados, raiz->filho[i], raiz->filho[ls], raiz->filho[rs],cod, t);
+    }
+    else {
+        remocaoRecur(indexador, dados, raiz_i, -1, -1, cod, t);
+    }
+
+    readAll(indexador, t);
+}
+
+int recuperarMaiorFilho(TABM * a){
+    return a->filho[a->nchaves-1];
+}
+
+int recuperarMenorFilho(TABM * a){
+    return a->filho[0];
+}
+
+int remocaoRecur(FILE * indexador, FILE * dados, int x, int ls, int rs, int cod, int t){
+    TABM * atual = acharNo(indexador,x,t);
+    TABM * irmaoDireita;
+    TABM * irmaoEsquerda;
+    int ls_atual, rs_atual;
+
+    if(ls != -1) irmaoEsquerda = acharNo(indexador, ls,t);
+    if(rs != -1) irmaoDireita = acharNo(indexador, rs, t);
+
+    if(!atual->folha){
+        int i = 0;
+        while(cod > atual->codigo[i] && i <= atual->nchaves) i++; // recuperar o filho certo
+        ls_atual = i - 1; rs_atual = i + 1;
+        if(i == atual->nchaves) rs = -1;
+
+        TABM * filho = acharNo(indexador, atual->filho[i], t);
+        if(filho->folha){
+            if(filho->nchaves >= t){// caso 1 remove normalmente
+                remocaoRecur(indexador, dados, atual->filho[i], -1, -1, cod, t);
+                filho = acharNo(indexador, atual->filho[i], t);
+                if(i == atual->nchaves) i--;
+                atual->codigo[i] = filho->codigo[0]; //atualizar o nó interno com o valor alterado na folha
+                alteraNo(indexador, atual, x, t);
+            }
+            else if(irmaoDireita->nchaves >= t || irmaoEsquerda->nchaves >= t){ // caso 3a
+            }
+            else{// caso 3b
+            }
+        }
+        int removido = remocaoRecur(indexador, dados,atual->filho[i], atual->filho[ls_atual], atual->filho[rs_atual], cod, t);
+    }
+    else{
+        int p = 0;
+        while(atual->codigo[p] != cod && p < atual->nchaves) p++;
+
+        if(p >= atual->nchaves) return -1;
+        // só entra aqui se for folha
+        for(int j = p; j < atual->nchaves - 1; j++){
+            atual->codigo[j] = atual->codigo[j + 1];
+            atual->pizza[j] = atual->pizza[j + 1];
+        }
+        atual->nchaves--;
+        alteraNo(indexador, atual, x, t);
+        freeNo(atual, t);
+        return x;
+    }
 }
 
 

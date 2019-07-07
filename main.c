@@ -38,6 +38,7 @@ int main()
     insere("arvorebinariamais", 28, "Pizza Robson", "Pizza Foda", "Foda", 50.2, 2);
     insere("arvorebinariamais", 33, "Pizza Robson", "Pizza Foda","Foda", 50.2, 2);
     insere("arvorebinariamais", 195, "Pizza Robson", "Pizza Foda","Foda", 50.2, 2);
+    remocao("arvorebinariamais", 12,2);
 
     int opcao = 1, codigo;
     char nome[50], categoria[20], descricao[50];

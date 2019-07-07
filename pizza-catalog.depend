@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1562477162 source:/home/victorfernandes/Documents/Projetos/pizza-catalog/lib/pizzaMS.c
+1562487451 source:/home/victorfernandes/Documents/Projetos/pizza-catalog/lib/pizzaMS.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
@@ -11,7 +11,7 @@
 	<stdlib.h>
 	<string.h>
 
-1562475806 source:/home/victorfernandes/Documents/Projetos/pizza-catalog/main.c
+1562487503 source:/home/victorfernandes/Documents/Projetos/pizza-catalog/main.c
 	<stdio.h>
 	<stdlib.h>
 	"lib/pizzaMS.h"
