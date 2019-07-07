@@ -2,15 +2,19 @@
 #include <stdlib.h>
 #include "lib/pizzaMS.h"
 
-void print(FILE * indexador, TABM * r, int t){
+
+void printRecur(FILE * indexador, TABM * r, int t){
     if(!r->folha){
         for(int i = 0; i < r->nchaves; i++){
-            printf("%d ", r->codigo[i]);
-            //print(indexador,acharNo(indexador, r->filho[i],t), t);
+            printf("No Interno: %d \n", r->codigo[i]);
+        }
+
+        for(int i = 0; i < r->nchaves + 1; i++){
+            printRecur(indexador,acharNo(indexador, r->filho[i],t), t);
         }
     }else{
         for(int i = 0; i < r->nchaves; i++){
-            printf("%d ", r->codigo[i]);
+            printf("Folha: %d \n", r->codigo[i]);
         }
     }
 }
@@ -18,17 +22,35 @@ void print(FILE * indexador, TABM * r, int t){
 
 int main()
 {
-
-    /*insere("arvorebinariamais", 47, "Pizza Calabreza", "Pizza Especial Boa demais","lalala", 40.2, 2);
-    insere("arvorebinariamais", 3, "Pizza Robson", "Pizza Foda", "Foda", 50.2, 2);
-    insere("arvorebinariamais", 5, "Pizza Robson", "Pizza Foda","Foda", 50.2, 2);
-    FILE * fp = criarIndexadorMS("arvorebinariamais");
-    int raiz_int = recuperarRaiz("arvorebinariamais");
-    TABM * raiz = acharNo(fp,0 , 2);
-    print(fp, raiz, 2);
-    fclose(fp);*/
+    insere("arvorebinariamais", 55, "Pizza Calabreza", "Pizza Especial Boa demais","lalala", 40.2, 2);
+    insere("arvorebinariamais", 55, "Pizza Calabreza", "Pizza Especial Boa demais","lalala", 40.2, 2);
+    insere("arvorebinariamais", 24, "Pizza Robson", "Pizza Foda", "Foda", 50.2, 2);
+    insere("arvorebinariamais", 12, "Pizza Robson", "Pizza Foda","Foda", 50.2, 2);
+    insere("arvorebinariamais", 95, "Pizza Robson", "Pizza Foda","Foda", 50.2, 2);
+    insere("arvorebinariamais", 52, "Pizza Calabreza", "Pizza Especial Boa demais","lalala", 40.2, 2);
+    insere("arvorebinariamais", 26, "Pizza Robson", "Pizza Foda", "Foda", 50.2, 2);
+    insere("arvorebinariamais", 19, "Pizza Robson", "Pizza Foda","Foda", 50.2, 2);
+    insere("arvorebinariamais", 85, "Pizza Robson", "Pizza Foda","Foda", 50.2, 2);
+    insere("arvorebinariamais", 53, "Pizza Calabreza", "Pizza Especial Boa demais","lalala", 40.2, 2);
+    insere("arvorebinariamais", 27, "Pizza Robson", "Pizza Foda", "Foda", 50.2, 2);
+    insere("arvorebinariamais", 20, "Pizza Robson", "Pizza Foda","Foda", 50.2, 2);
+    insere("arvorebinariamais", 185, "Pizza Robson", "Pizza Foda","Foda", 50.2, 2);
+    insere("arvorebinariamais", 28, "Pizza Robson", "Pizza Foda", "Foda", 50.2, 2);
+    insere("arvorebinariamais", 33, "Pizza Robson", "Pizza Foda","Foda", 50.2, 2);
+    insere("arvorebinariamais", 195, "Pizza Robson", "Pizza Foda","Foda", 50.2, 2);
+    remocao("arvorebinariamais", 12,2);
 
     int opcao = 1, codigo;
+    char nome[50], categoria[20], descricao[50];
+    nome[0] = '\0';
+    descricao[0] = '\0';
+    categoria[0] = '\0';
+    float preco;
+    int t = 2;
+    printf("Insira seu t para a arvore b+ que sera usada no catalogo de pizzas ");
+      scanf("%d", &t);
+      if(t < 2) t = 2;
+
     while(opcao != -9){
       printf("Sistema gerenciador da Pizzaria\n");
       printf("Escolha:\n");
@@ -44,7 +66,17 @@ int main()
       switch (opcao)
       {
       case 1:
-          insere("arvorebinariamais", 12, "Pizza Calabreza", "Pizza Especial Boa demais", "hjskdkshkdhskahda", 20, 2);
+          printf("Insira o codigo da pizza: ");
+          scanf("%d", &codigo);
+          printf("Insira o nome da pizza: ");
+          scanf("%s", &nome);
+          printf("Insira a categoria da pizza: ");
+          scanf("%s", &categoria);
+          printf("Insira a descricao da pizza: ");
+          scanf("%s", &descricao);
+          printf("Insira o preco da pizza: ");
+          scanf("%f", &preco);
+          insere("arvorebinariamais", codigo, nome, categoria, descricao, preco, t);
       break;
 
       /*case 2:
@@ -54,13 +86,15 @@ int main()
       break;*/
 
       case 3:
-          buscaCategoria("Especial","dados_iniciais.dat");
+          printf("Insira a categoria da pizza: ");
+          scanf("%s", &categoria);
+          buscaCategoria("arvorebinariamais", categoria);
       break;
 
       case 4:
           printf("Digite o código de uma pizza: ");
           scanf("%d", &codigo);
-          buscaPizza("dados_iniciais", codigo);
+          buscaPizza("arvorebinariamais", codigo, t);
       break;
       case 5:
           printf("Digite o código da pizza a ser alterada: ");

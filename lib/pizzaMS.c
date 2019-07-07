@@ -3,7 +3,6 @@
 #include <string.h>
 #include "pizzaMS.h"
 #include <limits.h>
-#define tam 1000
 
 int tamanho_pizza_bytes()
 {
@@ -21,6 +20,7 @@ TPizza *pizza(int cod, char *nome, char *descricao, char *categoria, float preco
     memset(p, 0, tamanho_pizza_bytes());
   p->codigo = cod;
   strcpy(p->nome, nome);
+  strcpy(p->categoria, categoria);
   strcpy(p->descricao, descricao);
   p->preco = preco;
   return p;
@@ -142,17 +142,46 @@ int lerPosicao(FILE *file)
   return ftell(file);
 }
 
-int *insere(char *nomeArquivo, int cod, char *nome, char *categoria, char *descricao, float preco, int t)
-{
-  /* if(busca(T, mat)) return T; */ // tem que fazer a busca antes
+void readAll(FILE * indexador,int t){
+    int i = 0;
+    fseek(indexador, 0, SEEK_END); int fim = ftell(indexador); fseek(indexador,0,SEEK_SET);
+
+    TABM * raiz = cria(t);
+    while(i < fim){
+    raiz = acharNo(indexador, i, t);
+    if(raiz->folha){
+        printf("FOLHA ");
+    }
+    else{
+        printf("NO INTERNO ");
+    }
+        printf("Index: %d ", i);
+        printf("Codigos: ");
+        for(int j = 0; j < raiz->nchaves; j++){
+            printf("%d ", raiz->codigo[j]);
+        }
+        printf("Filhos: ");
+        for(int j = 0; !raiz->folha && j < raiz->nchaves + 1; j++){
+            printf("%d ", raiz->filho[j]);
+        }
+
+        printf("\n");
+        i+=52;
+    }
+    printf("\n \n");
+}
+
+
+int *insere(char * nomeArquivo, int cod, char * nome, char * categoria,char * descricao, float preco, int t){
+  TABM * procura = busca(nomeArquivo, cod, t);
+  if(procura) return procura;
   FILE *indexador = criarIndexadorMS(nomeArquivo);
   FILE *dados = criarDadosMS(nomeArquivo);
-  printf("Executando criadores de arquivos");
-  TPizza *p = pizza(cod, nome, descricao, categoria, preco);
+  TPizza *p = pizza(cod, nome, descricao,categoria, preco);
+
 
   if (isEmpty(dados))
   {
-    printf("ESTAVA VAZIO");
     TABM *raiz = cria(t);
     raiz->codigo[0] = cod;
     raiz->pizza[0] = inserePizza(dados, p);
@@ -172,22 +201,21 @@ int *insere(char *nomeArquivo, int cod, char *nome, char *categoria, char *descr
 
   if (raiz->nchaves == (2 * t) - 1)
   {
-    printf("TEVE DIVISÃO DE NÓS");
     TABM *S = cria(t);
     S->nchaves = 0;
     S->folha = 0;
     S->filho[0] = raiz_int;
     int s_i = insereNo(indexador, S, t);
     s_i = divisao(indexador, dados, s_i, 1, raiz_int, t);
-    s_i = insere_nao_completo(indexador, dados, S, p, t);
+    readAll(indexador,t);
+    s_i = insere_nao_completo(indexador, dados, s_i, p, t);
+    readAll(indexador,t);
     freeNo(S, t);
     freeNo(raiz, t);
     return escreverRaiz(nomeArquivo, s_i);
   }
-  printf("SÓ DEVE INSERIR NÃO COMPLETO");
-  raiz_int = insere_nao_completo(indexador, dados, 0, p, t);
+  raiz_int = insere_nao_completo(indexador, dados, raiz_int, p, t);
   escreverRaiz(nomeArquivo, raiz_int);
-
   fclose(indexador);
   fclose(dados);
   freeNo(raiz, t);
@@ -196,11 +224,11 @@ int *insere(char *nomeArquivo, int cod, char *nome, char *categoria, char *descr
   return raiz_int;
 }
 
-int divisao(FILE *indexador, FILE *dados, int *x_i, int i, int *y_i, int t)
-{
-  TABM *x = acharNo(indexador, x_i, t);
-  TABM *y = acharNo(indexador, y_i, t);
+int divisao(FILE* indexador, FILE * dados, int x_i, int i, int y_i, int t){
+  TABM * x = acharNo(indexador, x_i, t);
+  TABM * y = acharNo(indexador, y_i, t);
   TABM *z = cria(t);
+  int z_i = insereNo(indexador,z,t);
   z->folha = y->folha;
   int j;
   if (!y->folha)
@@ -225,27 +253,26 @@ int divisao(FILE *indexador, FILE *dados, int *x_i, int i, int *y_i, int t)
       z->codigo[j] = y->codigo[j + t - 1]; //Caso em que y � folha, temos q passar a info para o n� da direita
       z->pizza[j] = y->pizza[j + t - 1];
     }
-    y->prox = z;
+    y->prox = z_i;
   }
-  y->nchaves = t - 1;
-  for (j = x->nchaves; j >= i; j--)
-    x->filho[j + 1] = x->filho[j];
-  x->filho[i] = z;
-  for (j = x->nchaves; j >= i; j--)
-  {
-    x->codigo[j] = x->codigo[j - 1];
-    x->pizza[j] = x->pizza[j - 1];
+  y->nchaves = t-1;
+  for(j=x->nchaves; j>=i; j--) x->filho[j+1]=x->filho[j];
+
+  x->filho[i] = z_i;
+  for(j=x->nchaves; j>=i; j--){
+    x->codigo[j] = x->codigo[j-1];
+    x->pizza[j] = x->pizza[j-1];
   }
   x->codigo[i - 1] = y->codigo[t - 1];
   x->pizza[i - 1] = y->pizza[t - 1];
   x->nchaves++;
 
-  insereNo(indexador, z, t);
-  alteraNo(indexador, x, x_i, t);
-  alteraNo(indexador, y, y_i, t);
-  freeNo(z, t);
-  freeNo(y, t);
-  freeNo(x, t);
+  alteraNo(indexador,z,z_i, t);
+  alteraNo(indexador,x, x_i, t);
+  alteraNo(indexador,y, y_i, t);
+  freeNo(z,t);
+  freeNo(y,t);
+  freeNo(x,t);
   return x_i;
 }
 
@@ -270,14 +297,16 @@ int insere_nao_completo(FILE *arquivoIndexador, FILE *arquivoDados, int x_i, TPi
   while ((i >= 0) && (pizza->codigo < x->codigo[i]))
     i--;
   i++;
-  TABM *filho = acharNo(arquivoIndexador, x->filho[i], t);
+  TABM * filho = acharNo(arquivoIndexador, x->filho[i], t);
   if (filho->nchaves == ((2 * t) - 1))
   {
-    //x = divisao(x, (i + 1), x->filho[i], t);
+    x_i = divisao(arquivoIndexador, arquivoDados, x_i, i + 1, x->filho[i], t);
+    x = acharNo(arquivoIndexador, x_i, t); // só pra atualizar o x
     if (pizza->codigo > x->codigo[i])
       i++;
   }
-  x->filho[i] = insere_nao_completo(arquivoIndexador, arquivoDados, x->filho[i], pizza->codigo, t);
+  x = acharNo(arquivoIndexador, x_i, t); // só pra atualizar o x
+  x->filho[i] = insere_nao_completo(arquivoIndexador, arquivoDados,  x->filho[i], pizza, t);
   int endereco = alteraNo(arquivoIndexador, x, x_i, t);
   freeNo(filho, t);
   freeNo(x, t);
@@ -298,22 +327,16 @@ FILE *criarDadosMS(char *nomeArquivo)
 {
   char *nomeArquivoDados = concatenarStrings(nomeArquivo, "_dados.o");
 
-  printf("Nome do arquivo pra abrir: %s \n", nomeArquivoDados);
-  FILE *arquivoDados = fopen(nomeArquivoDados, "rb+");
-  printf("executou a abertura do arquivo \n");
+  FILE * arquivoDados = fopen(nomeArquivoDados, "rb+");
   int boolean = arquivoDados == NULL;
-  printf("Executou a operação lógica");
   if (boolean)
   {
-    printf("Nome do arquivo pra abrir com wb: %s \n", nomeArquivoDados);
     arquivoDados = fopen(nomeArquivoDados, "wb+");
     if (arquivoDados == NULL)
     {
-      printf("Ocorreu um erro na abertura do arquivo de dados");
-      exit(1);
+          exit(1);
     }
   }
-  printf("retornando arquivo de dados");
   return arquivoDados;
 }
 
@@ -321,27 +344,21 @@ FILE *criarIndexadorMS(char *nomeArquivo)
 {
   char *nomeArquivoIndexador = concatenarStrings(nomeArquivo, "_indexador.o");
 
-  printf("Nome do arquivo pra abrir: %s \n", nomeArquivoIndexador);
   FILE *arquivoIndexador = fopen(nomeArquivoIndexador, "rb+");
-  printf("executou a abertura do arquivo \n");
   if (arquivoIndexador == NULL)
   {
-    printf("Nome do arquivo pra abrir com wb: %s \n", nomeArquivoIndexador);
     arquivoIndexador = fopen(nomeArquivoIndexador, "wb+");
     if (arquivoIndexador == NULL)
     {
-      printf("OCORREU UM ERRO");
       exit(1);
     }
   }
-  printf("retornando arquivo indexador \n");
   return arquivoIndexador;
 }
 
 FILE *criarRaizMS(char *nomeArquivo)
 {
   char *nomeArquivoRaiz = concatenarStrings(nomeArquivo, "_raiz.o");
-  printf("%s \n", nomeArquivoRaiz);
 
   FILE *arquivoRaiz = fopen(nomeArquivoRaiz, "rb+");
   if (arquivoRaiz == NULL)
@@ -374,10 +391,11 @@ int escreverRaiz(char *nomeArquivo, int p)
   return *valor;
 }
 
-/* TABM *busca(char *nomeArquivo, int id)
+TABM * busca(char *nomeArquivo, int id, int t)
 {
   FILE *dados = criarDadosMS(nomeArquivo);
   FILE *indexador = criarIndexadorMS(nomeArquivo);
+  int raiz_i = recuperarRaiz(nomeArquivo);
 
   fseek(dados, 0, SEEK_END);
   int estaVazioDados = ((int)ftell(dados)) <= 0;
@@ -386,36 +404,19 @@ int escreverRaiz(char *nomeArquivo, int p)
     return NULL;
   }
 
-  fseek(indexador, 0, SEEK_END);
-  int estaVazioIndexador = ((int)ftell(indexador)) <= 0;
-  if (estaVazioIndexador)
-  { //se o arquivo indexador está vazio procuramos em dados como se fosse uma lista normal
-    fseek(dados, 0, SEEK_SET);
-    TPizza *atual;
-    int isOk = 0;
-    while (isOk)
-    {
-      if (atual->codigo == id)
-      {
-        return atual;
-      }
-      isOk = fread(&atual, sizeof(TABM), 1, dados) >= 1;
-    }
-
-    return NULL;
-  }
 
   //descemos na arvore
-  TABM *raiz;
-  fread(&raiz, sizeof(TABM), 1, indexador);
+  TABM *raiz = acharNo(indexador, raiz_i,t);
+    readAll(indexador, t);
+  TABM *r = buscaRecursiva(indexador, dados, raiz, id, t); // recupera o nó no indexador
 
-  TABM *r = buscaRecursiva(indexador, dados, raiz, id); // recupera o nó no indexador
   fclose(indexador);
   fclose(dados);
   return r;
 }
 
-TABM * buscaRecursiva(FILE * indexador, FILE * dados, TABM * atual, int id){
+TABM * buscaRecursiva(FILE * indexador, FILE * dados, TABM * atual, int id, int t){
+
   if(!atual) return atual;
   int i = 0;
   while ((i < atual->nchaves) && (id > atual->codigo[i]))
@@ -430,33 +431,44 @@ TABM * buscaRecursiva(FILE * indexador, FILE * dados, TABM * atual, int id){
   if (atual->codigo[i] == id)
     i++;
 
-  return buscaRecursiva(indexador, dados, atual->filho[i], id);
-} */
+  return buscaRecursiva(indexador, dados, acharNo(indexador, atual->filho[i], t), id, t);
+}
 
-TPizza *buscaCategoria(char *categoria, char *dados)
+int tamanhoArquivo(FILE * arquivo){
+    fseek(arquivo, 0, SEEK_END);
+    int t = ftell(arquivo);
+    fseek(arquivo, 0, SEEK_SET);
+    return t;
+}
+
+TPizza * buscaCategoria( char *nomeArquivo, char *categoria)
 {
-  FILE *ent = fopen(dados, "rb");
-  if (!dados)
-    exit(-1);
-  TPizza *pizza = NULL;
-  TPizza *pizzaVet = (TPizza *)malloc(sizeof(TPizza) * tam);
+  FILE *arquivoDados = criarDadosMS(nomeArquivo);
+
+  int tam = tamanhoArquivo(arquivoDados);
+
+  TPizza *pizza = (TPizza *) malloc(tamanho_pizza_bytes());
+  TPizza *pizzaVet = (TPizza *)malloc(tam);
+
   int i = 0;
   int check;
-  while (i < tam && (ent))
+  while (i < (tam / tamanho_pizza_bytes()) && (arquivoDados))
   {
-    check = fread(&pizza, tamanho_pizza_bytes(), 1, ent);
+    check = fread(pizza, tamanho_pizza_bytes(), 1, arquivoDados);
     if (check)
     {
       int resp = strcmp(categoria, pizza->categoria);
       if (resp == 0)
       {
         pizzaVet[i] = *pizza;
+        printf("Categoria: %s | Nome: %s \n", pizza->categoria, pizza->nome);
       }
-      i++;
     }
-    fseek(ent, tamanho_pizza_bytes(), SEEK_CUR);
+    i++;
+    fseek(arquivoDados, tamanho_pizza_bytes(), SEEK_CUR);
   }
-  fclose(ent);
+  i++;
+  fclose(arquivoDados);
   return pizzaVet;
 }
 
@@ -467,7 +479,7 @@ void retiraPizza(TABM *ind, char *dados, char *indexador, int codigo, int t)
     printf("Ocorreu um erro\n");
     exit(-1);
   }
-  TABM *aux = buscaRecursiva(ind, dados, indexador, codigo);
+  TABM *aux = buscaRecursiva(ind, dados, indexador, codigo, t);
   if (aux)
   {
     FILE *ent = fopen(indexador, "rb");
@@ -520,18 +532,100 @@ void alteraPizza(char *dados, char *indexador, int codigo){
 }
 
 
-TPizza buscaPizza(char *dados, int codigo){//dando problema na hora de abrir o arquivo
-  FILE *ent = fopen(dados, "rb");
-  if(!ent) exit(-1);
-  TPizza pizza, aux;
-  int resp = 1;
-  while(resp)
-  {
-    resp = fread(&pizza, tamanho_pizza_bytes(), 1, ent);
-    if(pizza.codigo == codigo){
-      aux = pizza;
+
+int remocao(char * nomeArquivo, int cod, int t){
+    FILE * indexador = criarIndexadorMS(nomeArquivo);
+    FILE * dados = criarDadosMS(nomeArquivo);
+    readAll(indexador, t);
+    int raiz_i = recuperarRaiz(nomeArquivo);
+
+    TABM * raiz = acharNo(indexador, raiz_i, t);
+    if(!raiz->folha){
+        int i = 0;
+        while(cod > raiz->codigo[i] && i <= raiz->nchaves) i++;
+        int ls = i - 1, rs = i + 1;
+        if(i == 0) ls = -1;// faz parte do raciocínio
+        if(i == raiz->nchaves) rs = -1;
+        int removido = remocaoRecur(indexador, dados, raiz->filho[i], raiz->filho[ls], raiz->filho[rs],cod, t);
     }
-  } 
-  fclose(ent);
-  return aux;
+    else {
+        remocaoRecur(indexador, dados, raiz_i, -1, -1, cod, t);
+    }
+
+    readAll(indexador, t);
+}
+
+int recuperarMaiorFilho(TABM * a){
+    return a->filho[a->nchaves-1];
+}
+
+int recuperarMenorFilho(TABM * a){
+    return a->filho[0];
+}
+
+int remocaoRecur(FILE * indexador, FILE * dados, int x, int ls, int rs, int cod, int t){
+    TABM * atual = acharNo(indexador,x,t);
+    TABM * irmaoDireita;
+    TABM * irmaoEsquerda;
+    int ls_atual, rs_atual;
+
+    if(ls != -1) irmaoEsquerda = acharNo(indexador, ls,t);
+    if(rs != -1) irmaoDireita = acharNo(indexador, rs, t);
+
+    if(!atual->folha){
+        int i = 0;
+        while(cod > atual->codigo[i] && i <= atual->nchaves) i++; // recuperar o filho certo
+        ls_atual = i - 1; rs_atual = i + 1;
+        if(i == atual->nchaves) rs = -1;
+
+        TABM * filho = acharNo(indexador, atual->filho[i], t);
+        if(filho->folha){
+            if(filho->nchaves >= t){// caso 1 remove normalmente
+                remocaoRecur(indexador, dados, atual->filho[i], -1, -1, cod, t);
+                filho = acharNo(indexador, atual->filho[i], t);
+                if(i == atual->nchaves) i--;
+                atual->codigo[i] = filho->codigo[0]; //atualizar o nó interno com o valor alterado na folha
+                alteraNo(indexador, atual, x, t);
+            }
+            else if(irmaoDireita->nchaves >= t || irmaoEsquerda->nchaves >= t){ // caso 3a
+            }
+            else{// caso 3b
+            }
+        }
+        int removido = remocaoRecur(indexador, dados,atual->filho[i], atual->filho[ls_atual], atual->filho[rs_atual], cod, t);
+    }
+    else{
+        int p = 0;
+        while(atual->codigo[p] != cod && p < atual->nchaves) p++;
+
+        if(p >= atual->nchaves) return -1;
+        // só entra aqui se for folha
+        for(int j = p; j < atual->nchaves - 1; j++){
+            atual->codigo[j] = atual->codigo[j + 1];
+            atual->pizza[j] = atual->pizza[j + 1];
+        }
+        atual->nchaves--;
+        alteraNo(indexador, atual, x, t);
+        freeNo(atual, t);
+        return x;
+    }
+}
+
+
+TPizza * buscaPizza(char *nomeArquivo, int codigo, int t){
+  FILE *arquivoDados = criarDadosMS(nomeArquivo);
+  TABM * no = busca(nomeArquivo, codigo, t);
+  if(no){
+      int i = 0;
+      while(codigo != no->codigo[i] && i < no->nchaves) i++;
+
+      TPizza * pizza = acharPizza(arquivoDados, no->pizza[i]);
+      printf("Nome: %s | Descricao: %s | Categoria: %s | Preco: %f \n", pizza->nome, pizza->descricao, pizza->categoria, pizza->preco);
+      fclose(arquivoDados);
+      return pizza;
+  }
+
+  printf("Não existe pizza com esse código \n");
+  fclose(arquivoDados);
+  return NULL;
 }

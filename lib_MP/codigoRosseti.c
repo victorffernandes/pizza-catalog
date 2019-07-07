@@ -11,7 +11,7 @@ typedef struct pizza {
 } TPizza;
 
 typedef struct arvbm{
-  int nchaves, folha;
+  int nchaves, folha;//  fread(index->codigo, sizeof(int), ((t * 2) - 1),  arquivoIndexador);
   int * chave;
   struct arvbm **filho, *prox;
 }TABM;
