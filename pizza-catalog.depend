@@ -1,18 +1,22 @@
 # depslib dependency file v1.0
-1562444980 source:/home/victorfernandes/Documents/Projetos/pizza-catalog/lib/pizzaMS.c
+1562469120 source:/home/victorfernandes/Documents/Projetos/pizza-catalog/lib/pizzaMS.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
 	"pizzaMS.h"
 	<limits.h>
 
-1562077471 /home/victorfernandes/Documents/Projetos/pizza-catalog/lib/pizzaMS.h
+1562468469 /home/victorfernandes/Documents/Projetos/pizza-catalog/lib/pizzaMS.h
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
 
-1562444615 source:/home/victorfernandes/Documents/Projetos/pizza-catalog/main.c
+1562470008 source:/home/victorfernandes/Documents/Projetos/pizza-catalog/main.c
 	<stdio.h>
 	<stdlib.h>
 	"lib/pizzaMS.h"
+
+1562447555 source:/home/victorfernandes/Documents/Projetos/pizza-catalog/lib_MP/codigoRosseti.c
+	<stdio.h>
+	<stdlib.h>
 

@@ -2,15 +2,19 @@
 #include <stdlib.h>
 #include "lib/pizzaMS.h"
 
-void print(FILE * indexador, TABM * r, int t){
+
+void printRecur(FILE * indexador, TABM * r, int t){
     if(!r->folha){
         for(int i = 0; i < r->nchaves; i++){
-            printf("%d ", r->codigo[i]);
-            //print(indexador,acharNo(indexador, r->filho[i],t), t);
+            printf("No Interno: %d \n", r->codigo[i]);
+        }
+
+        for(int i = 0; i < r->nchaves + 1; i++){
+            printRecur(indexador,acharNo(indexador, r->filho[i],t), t);
         }
     }else{
         for(int i = 0; i < r->nchaves; i++){
-            printf("%d ", r->codigo[i]);
+            printf("Folha: %d \n", r->codigo[i]);
         }
     }
 }
@@ -19,13 +23,27 @@ void print(FILE * indexador, TABM * r, int t){
 int main()
 {
 
-    insere("arvorebinariamais", 47, "Pizza Calabreza", "Pizza Especial Boa demais","lalala", 40.2, 2);
-    insere("arvorebinariamais", 3, "Pizza Robson", "Pizza Foda", "Foda", 50.2, 2);
-    insere("arvorebinariamais", 5, "Pizza Robson", "Pizza Foda","Foda", 50.2, 2);
+    insere("arvorebinariamais", 55, "Pizza Calabreza", "Pizza Especial Boa demais","lalala", 40.2, 2);
+    insere("arvorebinariamais", 55, "Pizza Calabreza", "Pizza Especial Boa demais","lalala", 40.2, 2);
+    insere("arvorebinariamais", 24, "Pizza Robson", "Pizza Foda", "Foda", 50.2, 2);
+    insere("arvorebinariamais", 12, "Pizza Robson", "Pizza Foda","Foda", 50.2, 2);
+    insere("arvorebinariamais", 95, "Pizza Robson", "Pizza Foda","Foda", 50.2, 2);
+    insere("arvorebinariamais", 52, "Pizza Calabreza", "Pizza Especial Boa demais","lalala", 40.2, 2);
+    insere("arvorebinariamais", 26, "Pizza Robson", "Pizza Foda", "Foda", 50.2, 2);
+    insere("arvorebinariamais", 19, "Pizza Robson", "Pizza Foda","Foda", 50.2, 2);
+    insere("arvorebinariamais", 85, "Pizza Robson", "Pizza Foda","Foda", 50.2, 2);
+    insere("arvorebinariamais", 53, "Pizza Calabreza", "Pizza Especial Boa demais","lalala", 40.2, 2);
+    insere("arvorebinariamais", 27, "Pizza Robson", "Pizza Foda", "Foda", 50.2, 2);
+    insere("arvorebinariamais", 20, "Pizza Robson", "Pizza Foda","Foda", 50.2, 2);
+    insere("arvorebinariamais", 185, "Pizza Robson", "Pizza Foda","Foda", 50.2, 2);
+    insere("arvorebinariamais", 28, "Pizza Robson", "Pizza Foda", "Foda", 50.2, 2);
+    insere("arvorebinariamais", 33, "Pizza Robson", "Pizza Foda","Foda", 50.2, 2);
+    insere("arvorebinariamais", 195, "Pizza Robson", "Pizza Foda","Foda", 50.2, 2);
     FILE * fp = criarIndexadorMS("arvorebinariamais");
     int raiz_int = recuperarRaiz("arvorebinariamais");
-    TABM * raiz = acharNo(fp,0 , 2);
-    print(fp, raiz, 2);
+    TABM * raiz = acharNo(fp,raiz_int , 2);
+    printRecur(fp, raiz, 2);
+    readAll(fp, 2);
     fclose(fp);
 
 
