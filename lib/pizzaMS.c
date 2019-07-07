@@ -500,40 +500,39 @@ void retiraPizza(TABM *ind, char *dados, char *indexador, int codigo, int t)
   }
 }
 
-void alteraPizza(char *dados, char *indexador, int codigo){
-  FILE *ent = fopen(indexador, "rb"), *opn;
-  if(!ent) exit(-1);
+
+void alteraPizza(char *dados,  int codigo){
+  FILE *ent = criarIndexadorMS(dados);
   fseek(ent, 0L, SEEK_END);
-  int fileSize = ftell(ent), i;
+  int fileSize = ftell(ent), i = 0;
   rewind(ent);
   int ind = 0;
   int resp = 1;
-  while((resp) && (i < fileSize)){
+  while((resp) && (i < fileSize) && !feof(ent)){
     resp = fread(&ind, sizeof(int), 1, ent);
     if(ind == codigo){
-      opn = fopen(dados, "rb+");
-      if(!opn) exit(-1);
+      fseek(ent, -1L, SEEK_CUR);
+      printf("Ind dentro do while: %d\n", ind);
+      ent = criarDadosMS(dados);
       TPizza aux, pizza;
-      resp = fread(&pizza, tamanho_pizza_bytes(), 1, opn);
-      printf("O nome da pizza que voce deseja alterar eh: %s\n", pizza.nome);
+      resp = fread(&pizza, tamanho_pizza_bytes(), 1, ent);
+      printf("O nome da pizza que voce deseja remover eh: %s\n", pizza.nome);
       printf("Para alterar o nome da pizza, escreva um novo nome\n");
       scanf("%s", aux.nome);
-      aux.nome[49] = '\0';
-      fprintf(opn, "%s", aux.nome);
+      fwrite(aux.nome, sizeof(char)*50, 1, ent);
       printf("A categoria da pizza que voce deseja alterar eh: %s\n", pizza.categoria);
       printf("Para trocar a categoria, escreva uma nova\n");
-      scanf("%s", aux.categoria);
-      aux.categoria[19] = '\0';
+      scanf("%s", aux.categoria);  
+      fwrite(aux.categoria, sizeof(char)*20, 1, ent);
       printf("Para alterar a descricao da pizza, escreva uma nova: \n");
-      fprintf("[%^\n]", aux.descricao, ent);
-      aux.descricao[49] = ' \0';
+      scanf("%s", aux.descricao);
+      fwrite(aux.descricao, sizeof(char)*50, 1, ent);
     }
     i++;
   }
+  printf("O código informado eh invalido!\n");
   fclose(ent);
-  fclose(opn);
 }
-
 
 
 int remocao(char * nomeArquivo, int cod, int t){
@@ -657,4 +656,26 @@ void removePizzasPorCategoria(char *dados, int t){
   }
   free(vet);
   fclose(ent);  
+}
+
+void imprimeCatalogo(char *dados, int t){
+  printf("entrou na função\n");
+  FILE *ent = criarDadosMS(dados);
+  if(!ent){
+    printf("Ocorreu um erro\n");
+    exit(-1);
+  }
+  TPizza pizza;
+  int tam = tamanhoArquivo(ent), i = 0, check = 1;
+  while((i < tam) && check){
+    check = fread(&pizza, tamanho_pizza_bytes(), 1, ent);
+    if(check){
+      printf("%d, ", pizza.codigo);
+      printf("%s ", pizza.nome);
+      printf("(%s), ", pizza.categoria);
+      printf("R$ %.2f", pizza.preco); 
+      printf("\n");     
+    }
+    i++;
+  }  
 }

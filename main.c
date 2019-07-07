@@ -96,15 +96,19 @@ int main()
           buscaPizza("arvorebinariamais", codigo, t);
       break;
       case 5:
-          printf("Digite o código da pizza a ser alterada: ");
+          printf("Digite o codigo da pizza a ser alterada: ");
           scanf("%d", &codigo);
-          alteraPizza("dados_iniciais", "indexador", codigo);
+          alteraPizza("arvorebinariamais", codigo);
       break;
-
+      
 			case 6:
+          imprimeCatalogo("arvorebinariamais", t);
+      break;		
 					
 
       case -9:
+          printf("Obrigada por utilizar o nosso sistema!\nBye, bye\n");
+          printf("Saindo...\n");
           exit(-1);
 
       default:
