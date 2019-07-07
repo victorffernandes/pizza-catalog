@@ -23,22 +23,20 @@ void printRecur(FILE * indexador, TABM * r, int t){
 int main()
 {
     insere("arvorebinariamais", 55, "Pizza Calabreza", "Pizza Especial Boa demais","lalala", 40.2, 2);
-    insere("arvorebinariamais", 55, "Pizza Calabreza", "Pizza Especial Boa demais","lalala", 40.2, 2);
-    insere("arvorebinariamais", 24, "Pizza Robson", "Pizza Foda", "Foda", 50.2, 2);
-    insere("arvorebinariamais", 12, "Pizza Robson", "Pizza Foda","Foda", 50.2, 2);
-    insere("arvorebinariamais", 95, "Pizza Robson", "Pizza Foda","Foda", 50.2, 2);
-    insere("arvorebinariamais", 52, "Pizza Calabreza", "Pizza Especial Boa demais","lalala", 40.2, 2);
-    insere("arvorebinariamais", 26, "Pizza Robson", "Pizza Foda", "Foda", 50.2, 2);
-    insere("arvorebinariamais", 19, "Pizza Robson", "Pizza Foda","Foda", 50.2, 2);
-    insere("arvorebinariamais", 85, "Pizza Robson", "Pizza Foda","Foda", 50.2, 2);
-    insere("arvorebinariamais", 53, "Pizza Calabreza", "Pizza Especial Boa demais","lalala", 40.2, 2);
-    insere("arvorebinariamais", 27, "Pizza Robson", "Pizza Foda", "Foda", 50.2, 2);
-    insere("arvorebinariamais", 20, "Pizza Robson", "Pizza Foda","Foda", 50.2, 2);
-    insere("arvorebinariamais", 185, "Pizza Robson", "Pizza Foda","Foda", 50.2, 2);
-    insere("arvorebinariamais", 28, "Pizza Robson", "Pizza Foda", "Foda", 50.2, 2);
-    insere("arvorebinariamais", 33, "Pizza Robson", "Pizza Foda","Foda", 50.2, 2);
-    insere("arvorebinariamais", 195, "Pizza Robson", "Pizza Foda","Foda", 50.2, 2);
-    remocao("arvorebinariamais", 12,2);
+    insere("arvorebinariamais", 24, "Pizza 1", "Foda", "Foda", 50.2, 2);
+    insere("arvorebinariamais", 12, "Pizza 2", "Foda","Foda", 50.2, 2);
+    insere("arvorebinariamais", 95, "Pizza 3", "Foda","Foda", 50.2, 2);
+    insere("arvorebinariamais", 52, "Pizza Calabreza", "Especial Boa demais","lalala", 40.2, 2);
+//    insere("arvorebinariamais", 26, "Pizza Robson", "Foda", "Foda", 50.2, 2);
+//    insere("arvorebinariamais", 19, "Pizza Robson", "Foda","Foda", 50.2, 2);
+//    insere("arvorebinariamais", 85, "Pizza Robson", "Foda","Foda", 50.2, 2);
+//    insere("arvorebinariamais", 53, "Pizza Calabreza", "Pizza Especial Boa demais","lalala", 40.2, 2);
+//    insere("arvorebinariamais", 27, "Pizza Robson", "Pizza Foda", "Foda", 50.2, 2);
+//    insere("arvorebinariamais", 20, "Pizza Robson", "Pizza Foda","Foda", 50.2, 2);
+//    insere("arvorebinariamais", 185, "Pizza Robson", "Pizza Foda","Foda", 50.2, 2);
+//    insere("arvorebinariamais", 28, "Pizza Robson", "Pizza Foda", "Foda", 50.2, 2);
+//    insere("arvorebinariamais", 33, "Pizza Robson", "Pizza Foda","Foda", 50.2, 2);
+//    insere("arvorebinariamais", 195, "Pizza Robson", "Pizza Foda","Foda", 50.2, 2);
 
     int opcao = 1, codigo;
     char nome[50], categoria[20], descricao[50];

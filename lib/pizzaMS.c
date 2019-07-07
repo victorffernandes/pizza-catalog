@@ -452,7 +452,7 @@ TPizza * buscaCategoria( char *nomeArquivo, char *categoria)
 
   int i = 0;
   int check;
-  while (i < (tam / tamanho_pizza_bytes()) && (arquivoDados))
+  while (i < 1 + (tam / tamanho_pizza_bytes()) && (arquivoDados))
   {
     check = fread(pizza, tamanho_pizza_bytes(), 1, arquivoDados);
     if (check)
@@ -465,7 +465,7 @@ TPizza * buscaCategoria( char *nomeArquivo, char *categoria)
       }
     }
     i++;
-    fseek(arquivoDados, tamanho_pizza_bytes(), SEEK_CUR);
+    //fseek(arquivoDados, tamanho_pizza_bytes(), SEEK_CUR);
   }
   i++;
   fclose(arquivoDados);
@@ -566,6 +566,8 @@ int recuperarMenorFilho(TABM * a){
     return a->filho[0];
 }
 
+
+
 int remocaoRecur(FILE * indexador, FILE * dados, int x, int ls, int rs, int cod, int t){
     TABM * atual = acharNo(indexador,x,t);
     TABM * irmaoDireita;
@@ -590,12 +592,17 @@ int remocaoRecur(FILE * indexador, FILE * dados, int x, int ls, int rs, int cod,
                 atual->codigo[i] = filho->codigo[0]; //atualizar o nó interno com o valor alterado na folha
                 alteraNo(indexador, atual, x, t);
             }
-            else if(irmaoDireita->nchaves >= t || irmaoEsquerda->nchaves >= t){ // caso 3a
+            else if((ls != -1 && irmaoDireita->nchaves >= t) || (rs != -1 && irmaoEsquerda->nchaves >= t)){ // caso 3a
+                if(irmaoDireita->nchaves >= t){
+                    //for(int j = 0; j < filho->nchaves; j++)
+                }
             }
             else{// caso 3b
             }
         }
-        int removido = remocaoRecur(indexador, dados,atual->filho[i], atual->filho[ls_atual], atual->filho[rs_atual], cod, t);
+        else{
+            int removido = remocaoRecur(indexador, dados,atual->filho[i], atual->filho[ls_atual], atual->filho[rs_atual], cod, t);
+        }
     }
     else{
         int p = 0;
