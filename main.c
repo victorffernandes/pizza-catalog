@@ -40,7 +40,7 @@ int main()
 
     int opcao = 1, codigo;
     char nome[50], categoria[20], descricao[50];
-    nome[0] = '\0';
+    nome[0] = '\0'; //por que na casa [0]??
     descricao[0] = '\0';
     categoria[0] = '\0';
     float preco;
@@ -57,6 +57,7 @@ int main()
       printf("3 para buscar pizzas por categoria\n");
       printf("4 para buscar uma pizza\n");
       printf("5 para alterar uma pizza\n");
+			printf("6 para ver o catalogo completo\n");
       printf("-9 para encerrar\n");
 
       TABM *ind;
@@ -67,11 +68,11 @@ int main()
           printf("Insira o codigo da pizza: ");
           scanf("%d", &codigo);
           printf("Insira o nome da pizza: ");
-          scanf("%s", &nome);
+          scanf("%s", nome);
           printf("Insira a categoria da pizza: ");
-          scanf("%s", &categoria);
+          scanf("%s", categoria);
           printf("Insira a descricao da pizza: ");
-          scanf("%s", &descricao);
+          scanf("%s", descricao);
           printf("Insira o preco da pizza: ");
           scanf("%f", &preco);
           insere("arvorebinariamais", codigo, nome, categoria, descricao, preco, t);
@@ -85,7 +86,7 @@ int main()
 
       case 3:
           printf("Insira a categoria da pizza: ");
-          scanf("%s", &categoria);
+          scanf("%s", categoria);
           buscaCategoria("arvorebinariamais", categoria);
       break;
 
@@ -100,7 +101,8 @@ int main()
           alteraPizza("dados_iniciais", "indexador", codigo);
       break;
 
-
+			case 6:
+					
 
       case -9:
           exit(-1);

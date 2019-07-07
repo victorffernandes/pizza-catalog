@@ -515,7 +515,7 @@ void alteraPizza(char *dados, char *indexador, int codigo){
       if(!opn) exit(-1);
       TPizza aux, pizza;
       resp = fread(&pizza, tamanho_pizza_bytes(), 1, opn);
-      printf("O nome da pizza que voce deseja remover eh: %s\n", pizza.nome);
+      printf("O nome da pizza que voce deseja alterar eh: %s\n", pizza.nome);
       printf("Para alterar o nome da pizza, escreva um novo nome\n");
       scanf("%s", aux.nome);
       fprintf(opn, "%s", aux.nome);
@@ -627,7 +627,7 @@ TPizza * buscaPizza(char *nomeArquivo, int codigo, int t){
       while(codigo != no->codigo[i] && i < no->nchaves) i++;
 
       TPizza * pizza = acharPizza(arquivoDados, no->pizza[i]);
-      printf("Nome: %s | Descricao: %s | Categoria: %s | Preco: %f \n", pizza->nome, pizza->descricao, pizza->categoria, pizza->preco);
+      printf("Nome: %s | Descricao: %s | Categoria: %s | Preco: %.2f \n", pizza->nome, pizza->descricao, pizza->categoria, pizza->preco);
       fclose(arquivoDados);
       return pizza;
   }
@@ -635,4 +635,18 @@ TPizza * buscaPizza(char *nomeArquivo, int codigo, int t){
   printf("Não existe pizza com esse código \n");
   fclose(arquivoDados);
   return NULL;
+}
+
+void removePizzasPorCategoria(char *dados, int t){
+  FILE *ent = fopen(dados, "rb");
+  int tam = tamanhoArquivo(ent);
+  TPizza *vet = (TPizza *) malloc(tam);
+  int i = 0;
+  while (i < tam)
+  {
+    remocao(dados, vet[i].codigo, t);
+    i++;
+  }
+  free(vet);
+  fclose(ent);  
 }
