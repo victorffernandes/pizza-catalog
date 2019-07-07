@@ -30,9 +30,12 @@ TABM * buscaRecursiva(FILE * indexador, FILE * dados, TABM * atual, int id, int 
 TABM * busca(char * nomeArquivo, int id, int t);
 int *insere(char * nomeArquivo, int cod, char * nome, char * categoria,char * descricao, float preco, int t);
 TPizza *buscaCategoria(char * categoria, char * dados);
-void retiraPizza(TABM *ind, char * dados, char * indexador, int codigo);
+void retiraPizza(TABM *ind, char * dados, char * indexador, int codigo, int t);
 void alteraPizza(char * dados, char * indexador, int codigo);
 TABM * acharNo(FILE * indexador, int i, int t);
+void alteraPizza(char *dados, char *indexador, int codigo);
+void alteraPizza(char *dados, char *indexador, int codigo);
+TPizza * buscaPizza(char *dados, int codigo, int t);
 
 int escreverRaiz(char *nomeArquivo, int p);
 int recuperarRaiz(char *nomeArquivo);

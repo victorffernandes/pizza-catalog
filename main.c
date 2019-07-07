@@ -22,7 +22,6 @@ void printRecur(FILE * indexador, TABM * r, int t){
 
 int main()
 {
-
     insere("arvorebinariamais", 55, "Pizza Calabreza", "Pizza Especial Boa demais","lalala", 40.2, 2);
     insere("arvorebinariamais", 55, "Pizza Calabreza", "Pizza Especial Boa demais","lalala", 40.2, 2);
     insere("arvorebinariamais", 24, "Pizza Robson", "Pizza Foda", "Foda", 50.2, 2);
@@ -39,46 +38,79 @@ int main()
     insere("arvorebinariamais", 28, "Pizza Robson", "Pizza Foda", "Foda", 50.2, 2);
     insere("arvorebinariamais", 33, "Pizza Robson", "Pizza Foda","Foda", 50.2, 2);
     insere("arvorebinariamais", 195, "Pizza Robson", "Pizza Foda","Foda", 50.2, 2);
-    FILE * fp = criarIndexadorMS("arvorebinariamais");
-    int raiz_int = recuperarRaiz("arvorebinariamais");
-    TABM * raiz = acharNo(fp,raiz_int , 2);
-    printRecur(fp, raiz, 2);
-    readAll(fp, 2);
-    fclose(fp);
+
+    int opcao = 1, codigo;
+    char nome[50], categoria[20], descricao[50];
+    nome[0] = '\0';
+    descricao[0] = '\0';
+    categoria[0] = '\0';
+    float preco;
+    int t = 2;
+    printf("Insira seu t para a arvore b+ que sera usada no catalogo de pizzas ");
+      scanf("%d", &t);
+      if(t < 2) t = 2;
+
+    while(opcao != -9){
+      printf("Sistema gerenciador da Pizzaria\n");
+      printf("Escolha:\n");
+      printf("1 para adicionar uma nova pizza\n");
+      printf("2 para retirar uma pizza\n");
+      printf("3 para buscar pizzas por categoria\n");
+      printf("4 para buscar uma pizza\n");
+      printf("5 para alterar uma pizza\n");
+      printf("-9 para encerrar\n");
+
+      TABM *ind;
+      scanf("%d", &opcao);
+      switch (opcao)
+      {
+      case 1:
+          printf("Insira o codigo da pizza: ");
+          scanf("%d", &codigo);
+          printf("Insira o nome da pizza: ");
+          scanf("%s", &nome);
+          printf("Insira a categoria da pizza: ");
+          scanf("%s", &categoria);
+          printf("Insira a descricao da pizza: ");
+          scanf("%s", &descricao);
+          printf("Insira o preco da pizza: ");
+          scanf("%f", &preco);
+          insere("arvorebinariamais", codigo, nome, categoria, descricao, preco, t);
+      break;
+
+      /*case 2:
+          printf("Digite o código da pizza que deseja retirar: ");
+          scanf("%d", &codigo);
+          retiraPizza(ind, "indexador","dados_iniciais.dat", codigo, 2);
+      break;*/
+
+      case 3:
+          printf("Insira a categoria da pizza: ");
+          scanf("%s", &categoria);
+          buscaCategoria("arvorebinariamais", categoria);
+      break;
+
+      case 4:
+          printf("Digite o código de uma pizza: ");
+          scanf("%d", &codigo);
+          buscaPizza("arvorebinariamais", codigo, t);
+      break;
+      case 5:
+          printf("Digite o código da pizza a ser alterada: ");
+          scanf("%d", &codigo);
+          alteraPizza("dados_iniciais", "indexador", codigo);
+      break;
 
 
-    /* printf("Sistema gerenciador da Pizzaria\n");
-    printf("Escolha:\n");
-    printf("1 para adicionar uma nova pizza");
-    printf("2 para retirar uma pizza");
-    printf("3 para busca pizzas por categoria");
-    printf("-9 para encerrar");
 
-    int opcao;
-    TABM *ind;
-    scanf("%d", &opcao);
-    switch (opcao)
-    {
-    case 1:
-        insere("arvorebinariamais", 12, "Pizza Calabreza", "Pizza Especial Boa demais", 40.2, 2);
-    break;
+      case -9:
+          exit(-1);
 
-    case 2:
-        retiraPizza(ind, "indexador","dados_iniciais.dat", 5);
-    break;
-
-    case 3:
-        buscaCategoria("Especial","dados_iniciais.dat");
-    break;
-
-    case -9:
-        exit(-1);
-
-    default:
-        printf("OpÃ§Ã£o invÃ¡lida, desculpe!");
-        break;
+      default:
+          printf("Opção inválida, desculpe!");
+          break;
+      }
     }
-
-    return 0; */
+    return 0;
 
 }
