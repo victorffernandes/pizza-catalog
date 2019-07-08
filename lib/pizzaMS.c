@@ -465,14 +465,13 @@ TPizza * buscaCategoria( char *nomeArquivo, char *categoria)
       }
     }
     i++;
-    //fseek(arquivoDados, tamanho_pizza_bytes(), SEEK_CUR);
   }
   i++;
   fclose(arquivoDados);
   return pizzaVet;
 }
 
-void retiraPizza(TABM *ind, char *dados, char *indexador, int codigo, int t)
+/*void retiraPizza(TABM *ind, char *dados, char *indexador, int codigo, int t)
 {
   if (!ind)
   {
@@ -498,7 +497,7 @@ void retiraPizza(TABM *ind, char *dados, char *indexador, int codigo, int t)
       }
     }
   }
-}
+}*/
 
 
 void alteraPizza(char *dados,  int codigo){
