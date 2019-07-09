@@ -449,9 +449,8 @@ TPizza * buscaCategoria( char *nomeArquivo, char *categoria)
 
   TPizza *pizza = (TPizza *) malloc(tamanho_pizza_bytes());
   TPizza *pizzaVet = (TPizza *)malloc(tam);
+  int i = 0, check;
 
-  int i = 0;
-  int check;
   while (i < 1 + (tam / tamanho_pizza_bytes()) && (arquivoDados))
   {
     check = fread(pizza, tamanho_pizza_bytes(), 1, arquivoDados);
@@ -505,13 +504,11 @@ void alteraPizza(char *dados,  int codigo){
   fseek(ent, 0L, SEEK_END);
   int fileSize = ftell(ent), i = 0;
   rewind(ent);
-  int ind = 0;
-  int resp = 1;
+  int ind = 0, resp = 1, verify = 0;
   while((resp) && (i < fileSize) && !feof(ent)){
     resp = fread(&ind, sizeof(int), 1, ent);
     if(ind == codigo){
       fseek(ent, -1L, SEEK_CUR);
-      printf("Ind dentro do while: %d\n", ind);
       ent = criarDadosMS(dados);
       TPizza aux, pizza;
       resp = fread(&pizza, tamanho_pizza_bytes(), 1, ent);
@@ -526,10 +523,11 @@ void alteraPizza(char *dados,  int codigo){
       printf("Para alterar a descricao da pizza, escreva uma nova: \n");
       scanf("%s", aux.descricao);
       fwrite(aux.descricao, sizeof(char)*50, 1, ent);
+      verify = 1;
     }
     i++;
   }
-  printf("O código informado eh invalido!\n");
+  if(verify != 1) printf("O código informado eh invalido!\n");
   fclose(ent);
 }
 
@@ -658,7 +656,6 @@ void removePizzasPorCategoria(char *dados, int t){
 }
 
 void imprimeCatalogo(char *dados, int t){
-  printf("entrou na função\n");
   FILE *ent = criarDadosMS(dados);
   if(!ent){
     printf("Ocorreu um erro\n");

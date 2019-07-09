@@ -35,6 +35,7 @@ void alteraPizza(char *dados,  int codigo);
 TABM * acharNo(FILE * indexador, int i, int t);
 TPizza * buscaPizza(char *dados, int codigo, int t);
 int remocao(char * nomeArquivo, int cod, int t);
+void removePizzasPorCategoria(char *dados, int t);
 
 int escreverRaiz(char *nomeArquivo, int p);
 int recuperarRaiz(char *nomeArquivo);

@@ -78,11 +78,11 @@ int main()
           insere("arvorebinariamais", codigo, nome, categoria, descricao, preco, t);
       break;
 
-      /*case 2:
+      case 2:
           printf("Digite o código da pizza que deseja retirar: ");
           scanf("%d", &codigo);
-          retiraPizza(ind, "indexador","dados_iniciais.dat", codigo, 2);
-      break;*/
+          remocao("arvorebinariamais", codigo, t);
+      break;
 
       case 3:
           printf("Insira a categoria da pizza: ");
@@ -91,7 +91,7 @@ int main()
       break;
 
       case 4:
-          printf("Digite o código de uma pizza: ");
+          printf("Digite o codigo de uma pizza: ");
           scanf("%d", &codigo);
           buscaPizza("arvorebinariamais", codigo, t);
       break;
@@ -103,6 +103,9 @@ int main()
       
 			case 6:
           imprimeCatalogo("arvorebinariamais", t);
+      break;
+      case 7:
+        removePizzasPorCategoria("arvorebinariamais", t);
       break;		
 					
 
