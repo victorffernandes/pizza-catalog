@@ -22,30 +22,15 @@ void printRecur(FILE * indexador, TABM * r, int t){
 
 int main()
 {
-    insere("arvorebinariamais", 55, "Pizza Calabreza", "Pizza Especial Boa demais","lalala", 40.2, 2);
-    insere("arvorebinariamais", 24, "Pizza 1", "Foda", "Foda", 50.2, 2);
-    insere("arvorebinariamais", 12, "Pizza 2", "Foda","Foda", 50.2, 2);
-    insere("arvorebinariamais", 95, "Pizza 3", "Foda","Foda", 50.2, 2);
-    insere("arvorebinariamais", 52, "Pizza Calabreza", "Especial Boa demais","lalala", 40.2, 2);
-//    insere("arvorebinariamais", 26, "Pizza Robson", "Foda", "Foda", 50.2, 2);
-//    insere("arvorebinariamais", 19, "Pizza Robson", "Foda","Foda", 50.2, 2);
-//    insere("arvorebinariamais", 85, "Pizza Robson", "Foda","Foda", 50.2, 2);
-//    insere("arvorebinariamais", 53, "Pizza Calabreza", "Pizza Especial Boa demais","lalala", 40.2, 2);
-//    insere("arvorebinariamais", 27, "Pizza Robson", "Pizza Foda", "Foda", 50.2, 2);
-//    insere("arvorebinariamais", 20, "Pizza Robson", "Pizza Foda","Foda", 50.2, 2);
-//    insere("arvorebinariamais", 185, "Pizza Robson", "Pizza Foda","Foda", 50.2, 2);
-//    insere("arvorebinariamais", 28, "Pizza Robson", "Pizza Foda", "Foda", 50.2, 2);
-//    insere("arvorebinariamais", 33, "Pizza Robson", "Pizza Foda","Foda", 50.2, 2);
-//    insere("arvorebinariamais", 195, "Pizza Robson", "Pizza Foda","Foda", 50.2, 2);
-
     int opcao = 1, codigo;
     char nome[50], categoria[20], descricao[50];
-    nome[0] = '\0'; //por que na casa [0]??
-    descricao[0] = '\0';
-    categoria[0] = '\0';
+    char nomeLoja[60];
     float preco;
     int t = 2;
-    printf("Insira seu t para a arvore b+ que sera usada no catalogo de pizzas ");
+    printf("Insira o nome da sua loja: ");
+    scanf("%[^\n]%*c", nomeLoja);
+
+    printf("Insira seu t para a arvore b+ que sera usada no catalogo de pizzas: ");
       scanf("%d", &t);
       if(t < 2) t = 2;
 
@@ -67,47 +52,57 @@ int main()
       case 1:
           printf("Insira o codigo da pizza: ");
           scanf("%d", &codigo);
+          while (getchar() != '\n')
+            continue;
           printf("Insira o nome da pizza: ");
-          scanf("%s", nome);
+          scanf(" %c", nome);
+          while (getchar() != '\n')
+            continue;
           printf("Insira a categoria da pizza: ");
-          scanf("%s", categoria);
+          scanf(" %c", categoria);
+           while (getchar() != '\n')
+            continue;
           printf("Insira a descricao da pizza: ");
-          scanf("%s", descricao);
+          scanf(" %c", descricao);
+          while (getchar() != '\n')
+            continue;
           printf("Insira o preco da pizza: ");
           scanf("%f", &preco);
-          insere("arvorebinariamais", codigo, nome, categoria, descricao, preco, t);
+          insere(nomeLoja, codigo, nome, categoria, descricao, preco, t);
       break;
 
       case 2:
           printf("Digite o código da pizza que deseja retirar: ");
           scanf("%d", &codigo);
-          remocao("arvorebinariamais", codigo, t);
+          remocao(nomeLoja, codigo, t);
       break;
 
       case 3:
           printf("Insira a categoria da pizza: ");
-          scanf("%s", categoria);
-          buscaCategoria("arvorebinariamais", categoria);
+          scanf("%[^\n]%*c", categoria);
+          buscaCategoria(nomeLoja, categoria);
       break;
 
       case 4:
           printf("Digite o codigo de uma pizza: ");
           scanf("%d", &codigo);
-          buscaPizza("arvorebinariamais", codigo, t);
+          buscaPizza(nomeLoja, codigo, t);
       break;
       case 5:
           printf("Digite o codigo da pizza a ser alterada: ");
           scanf("%d", &codigo);
-          alteraPizza("arvorebinariamais", codigo);
+          alteraPizza(nomeLoja, codigo);
       break;
-      
-			case 6:
-          imprimeCatalogo("arvorebinariamais", t);
+
+      case 6:
+          printf("\n \n");
+          imprimeCatalogo(nomeLoja, t);
+          printf("\n \n");
       break;
       case 7:
-        removePizzasPorCategoria("arvorebinariamais", t);
-      break;		
-					
+        removePizzasPorCategoria(nomeLoja, t);
+      break;
+
 
       case -9:
           printf("Obrigada por utilizar o nosso sistema!\nBye, bye\n");

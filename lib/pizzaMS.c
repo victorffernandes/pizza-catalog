@@ -89,6 +89,14 @@ TABM *acharNo(FILE *arquivoIndexador, int i, int t)
   return index;
 }
 
+int alterarPizza(FILE *arquivoDados,int x_i, TPizza *pizza)
+{
+  fseek(arquivoDados, x_i, SEEK_SET);
+  int posDados = ftell(arquivoDados);
+  fwrite(pizza, tamanho_pizza_bytes(), 1, arquivoDados);
+  return posDados;
+}
+
 int inserePizza(FILE *arquivoDados, TPizza *pizza)
 {
   fseek(arquivoDados, 0, SEEK_END);
@@ -518,7 +526,7 @@ void alteraPizza(char *dados,  int codigo){
       fwrite(aux.nome, sizeof(char)*50, 1, ent);
       printf("A categoria da pizza que voce deseja alterar eh: %s\n", pizza.categoria);
       printf("Para trocar a categoria, escreva uma nova\n");
-      scanf("%s", aux.categoria);  
+      scanf("%s", aux.categoria);
       fwrite(aux.categoria, sizeof(char)*20, 1, ent);
       printf("Para alterar a descricao da pizza, escreva uma nova: \n");
       scanf("%s", aux.descricao);
@@ -550,8 +558,6 @@ int remocao(char * nomeArquivo, int cod, int t){
     else {
         remocaoRecur(indexador, dados, raiz_i, -1, -1, cod, t);
     }
-
-    readAll(indexador, t);
 }
 
 int recuperarMaiorFilho(TABM * a){
@@ -589,11 +595,10 @@ int remocaoRecur(FILE * indexador, FILE * dados, int x, int ls, int rs, int cod,
                 alteraNo(indexador, atual, x, t);
             }
             else if((ls != -1 && irmaoDireita->nchaves >= t) || (rs != -1 && irmaoEsquerda->nchaves >= t)){ // caso 3a
-                if(irmaoDireita->nchaves >= t){
-                    //for(int j = 0; j < filho->nchaves; j++)
-                }
+                printf("CASO 3A - NÃO IMPLEMENTADO");
             }
             else{// caso 3b
+                printf("CASO 3B - NÃO IMPLEMENTADO");
             }
         }
         else{
@@ -605,6 +610,9 @@ int remocaoRecur(FILE * indexador, FILE * dados, int x, int ls, int rs, int cod,
         while(atual->codigo[p] != cod && p < atual->nchaves) p++;
 
         if(p >= atual->nchaves) return -1;
+
+        TPizza * p2 = pizza(-1,"_", "_","_", 12);
+        alterarPizza(dados, atual->pizza[p], p2);
         // só entra aqui se for folha
         for(int j = p; j < atual->nchaves - 1; j++){
             atual->codigo[j] = atual->codigo[j + 1];
@@ -652,7 +660,7 @@ void removePizzasPorCategoria(char *dados, int t){
     i++;
   }
   free(vet);
-  fclose(ent);  
+  fclose(ent);
 }
 
 void imprimeCatalogo(char *dados, int t){
@@ -669,9 +677,9 @@ void imprimeCatalogo(char *dados, int t){
       printf("%d, ", pizza.codigo);
       printf("%s ", pizza.nome);
       printf("(%s), ", pizza.categoria);
-      printf("R$ %.2f", pizza.preco); 
-      printf("\n");     
+      printf("R$ %.2f", pizza.preco);
+      printf("\n");
     }
     i++;
-  }  
+  }
 }
