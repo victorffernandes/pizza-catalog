@@ -55,17 +55,11 @@ int main()
           while (getchar() != '\n')
             continue;
           printf("Insira o nome da pizza: ");
-          scanf(" %c", nome);
-          while (getchar() != '\n')
-            continue;
+          scanf("%[^\n]%*c", nome);
           printf("Insira a categoria da pizza: ");
-          scanf(" %c", categoria);
-           while (getchar() != '\n')
-            continue;
+          scanf("%[^\n]%*c", categoria);
           printf("Insira a descricao da pizza: ");
-          scanf(" %c", descricao);
-          while (getchar() != '\n')
-            continue;
+          scanf("%[^\n]%*c", descricao);
           printf("Insira o preco da pizza: ");
           scanf("%f", &preco);
           insere(nomeLoja, codigo, nome, categoria, descricao, preco, t);
